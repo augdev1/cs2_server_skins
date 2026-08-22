@@ -10,7 +10,7 @@ import { Sparkles, AlertCircle } from 'lucide-react';
 export default function App() {
   const [user, setUser] = useState(null);
   const [isDevLoginOpen, setIsDevLoginOpen] = useState(false);
-  const [currentView, setCurrentView] = useState('inventory'); // 'inventory' (Image 1) | 'add' (Image 2)
+  const [currentView, setCurrentView] = useState('inventory'); // 'inventory' | 'add'
   const [team, setTeam] = useState(2); // 2 = TR, 3 = CT
 
   // Data states
@@ -137,7 +137,6 @@ export default function App() {
       return;
     }
     
-    // Encontra o objeto da arma base correspondente
     const baseWeapon = weapons.find(w => w.defindex === item.weapon_defindex) || 
                        knives.find(k => k.defindex === item.weapon_defindex) ||
                        item;
@@ -155,22 +154,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#0c0d12] text-gray-100 selection:bg-[#ff5500] selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen flex bg-[#000000] text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased overflow-x-hidden">
       {/* Toast Notification */}
       {toast && (
         <div 
           className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-xl font-semibold text-xs shadow-2xl backdrop-blur-xl animate-fade-in border ${
             toast.type === 'error' 
               ? 'bg-red-950/90 text-red-200 border-red-500/50 shadow-red-900/50' 
-              : 'bg-[#141622]/95 text-white border-[#ff5500] shadow-[0_0_20px_rgba(255,85,0,0.3)]'
+              : 'bg-[#0d0d0d]/95 text-white border-[#ff2020] shadow-[0_0_20px_rgba(255,32,32,0.4)]'
           }`}
         >
-          {toast.type === 'error' ? <AlertCircle size={16} /> : <Sparkles size={16} className="text-[#ff5500]" />}
+          {toast.type === 'error' ? <AlertCircle size={16} /> : <Sparkles size={16} className="text-[#ff2020]" />}
           <span>{toast.message}</span>
         </div>
       )}
 
-      {/* Left Vertical Sidebar (Matching Firegames) */}
+      {/* Left Vertical Sidebar in True Black & Vivid Red */}
       <Sidebar
         currentView={currentView}
         onNavigate={(view) => setCurrentView(view)}
@@ -179,10 +178,10 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      {/* Main Content Area in Pure Black */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#000000]">
         {currentView === 'add' ? (
-          /* View 2: "Criar Item / Passo 1 de 2" (Matching Image 2) */
+          /* View 2: "Criar Item / Passo 1 de 2" */
           <AddItemView
             skins={allSkins}
             weapons={weapons}
@@ -194,8 +193,8 @@ export default function App() {
             onSelectSkin={handleSelectSkinFromAddView}
           />
         ) : (
-          /* View 1: "Meu Inventário" (Matching Image 1) */
-          <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6">
+          /* View 1: "Meu Inventário" */
+          <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6 bg-[#000000]">
             <InventoryView
               weapons={weapons}
               knives={knives}
@@ -220,7 +219,7 @@ export default function App() {
         )}
       </div>
 
-      {/* Modal Customizer for Wear, Float, StatTrak, Nametag */}
+      {/* Modal Customizer */}
       <SkinCustomizerModal
         weapon={customizingWeapon}
         team={team}

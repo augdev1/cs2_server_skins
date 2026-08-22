@@ -121,7 +121,6 @@ export default function AddItemView({
     let source = [];
     if (selectedSubTab === 'skins') {
       source = skins.filter(s => {
-        // Exclude gloves from regular skins tab
         return !s.weapon_name?.startsWith('gloves_') && !s.weapon_name?.startsWith('weapon_knife') && !s.weapon_name?.startsWith('weapon_bayonet');
       });
     } else if (selectedSubTab === 'knives') {
@@ -188,9 +187,9 @@ export default function AddItemView({
   }, [selectedSubTab, skins, gloves, knives, agents, music, search, selectedRarities, selectedWeaponDefindexes]);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-gray-200 flex flex-col selection:bg-[#ff5500] selection:text-white">
+    <div className="min-h-screen bg-[#000000] text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
-      <header className="border-b border-[#18181c] bg-[#0d0d10] px-6 py-3 flex items-center justify-between sticky top-0 z-30">
+      <header className="border-b border-[#141414] bg-[#070707] px-6 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -212,14 +211,14 @@ export default function AddItemView({
         <button
           type="button"
           onClick={onBack}
-          className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#141418] border border-[#22222a] hover:bg-[#1a1a20] text-gray-300 transition-all cursor-pointer"
+          className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e0e0e] border border-[#1e1e1e] hover:bg-[#161616] text-gray-300 transition-all cursor-pointer"
         >
           Cancelar
         </button>
       </header>
 
       {/* Sub-navigation Categories Tabs */}
-      <div className="border-b border-[#18181c] bg-[#0a0a0d] px-6 py-2">
+      <div className="border-b border-[#141414] bg-[#050505] px-6 py-2">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
           {[
             { id: 'skins', label: 'Skins de Armas' },
@@ -240,7 +239,7 @@ export default function AddItemView({
                 }}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
-                    ? 'bg-white text-black shadow-sm'
+                    ? 'bg-[#ff2020] text-white shadow-[0_0_12px_rgba(255,32,32,0.4)]'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -252,7 +251,7 @@ export default function AddItemView({
       </div>
 
       {/* Search Bar & Quick Weapon Pills */}
-      <div className="px-6 py-3 border-b border-[#18181c] bg-[#09090b] flex flex-col gap-2.5">
+      <div className="px-6 py-3 border-b border-[#141414] bg-[#000000] flex flex-col gap-2.5">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:max-w-md">
             <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
@@ -261,17 +260,17 @@ export default function AddItemView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nome da skin ou arma..."
-              className="w-full bg-[#111114] border border-[#1e1e24] pl-9 pr-4 py-1.5 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff5500] transition-all"
+              className="w-full bg-[#0a0a0a] border border-[#1a1a1a] pl-9 pr-4 py-1.5 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
             />
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end text-xs">
-            <div className="flex items-center bg-[#111114] border border-[#1e1e24] rounded-lg p-0.5">
+            <div className="flex items-center bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-0.5">
               <button
                 type="button"
                 onClick={() => setGridMode('large')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                  gridMode === 'large' ? 'bg-[#ff5500] text-white' : 'text-gray-400 hover:text-white'
+                  gridMode === 'large' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 Grande
@@ -280,7 +279,7 @@ export default function AddItemView({
                 type="button"
                 onClick={() => setGridMode('compact')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                  gridMode === 'compact' ? 'bg-[#ff5500] text-white' : 'text-gray-400 hover:text-white'
+                  gridMode === 'compact' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 Compacto
@@ -293,7 +292,7 @@ export default function AddItemView({
           </div>
         </div>
 
-        {/* Quick Weapon Filter Pills (AK-47, M4A4, M4A1-S, AWP, Deagle, USP-S, Glock-18) */}
+        {/* Quick Weapon Filter Pills in Vivid Red */}
         {selectedSubTab === 'skins' && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider shrink-0 mr-1">
@@ -308,8 +307,8 @@ export default function AddItemView({
                   onClick={() => toggleWeaponDefindex(pw.defindex)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
                     isSelected
-                      ? 'bg-[#ff5500] text-white shadow-sm'
-                      : 'bg-[#121216] text-gray-400 border border-[#1e1e24] hover:text-white hover:border-gray-500'
+                      ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
+                      : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-500'
                   }`}
                 >
                   {pw.name}
@@ -323,7 +322,7 @@ export default function AddItemView({
       {/* Main Body: Skin Grid + Right Filter Sidebar */}
       <div className="flex-1 flex overflow-hidden">
         {/* CENTER / LEFT: Skins Grid */}
-        <div className="flex-1 p-5 overflow-y-auto bg-[#09090b]">
+        <div className="flex-1 p-5 overflow-y-auto bg-[#000000]">
           {filteredList.length === 0 ? (
             <div className="text-center py-20 text-gray-500 text-xs">
               Nenhum item encontrado com os filtros selecionados.
@@ -344,7 +343,7 @@ export default function AddItemView({
                   <div
                     key={`${item.weapon_defindex}_${item.paint || index}`}
                     onClick={() => onSelectSkin(item)}
-                    className="group bg-[#101014] hover:bg-[#15151a] border border-[#1d1d24] hover:border-[#ff5500]/60 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
+                    className="group bg-[#090909] hover:bg-[#111111] border border-[#161616] hover:border-[#ff2020]/70 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
                     style={{
                       borderBottomColor: rarityColor,
                       borderBottomWidth: '2.5px'
@@ -355,7 +354,7 @@ export default function AddItemView({
                       <img
                         src={item.image}
                         alt={item.paint_name}
-                        className="max-w-[145px] max-h-[80px] object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-200"
+                        className="max-w-[145px] max-h-[80px] object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform duration-200"
                         onError={(e) => {
                           e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png';
                         }}
@@ -364,7 +363,7 @@ export default function AddItemView({
 
                     {/* Skin Text Details */}
                     <div className="mt-2 pt-2 border-t border-white/5">
-                      <div className="text-xs font-black text-white truncate leading-tight group-hover:text-[#ff5500] transition-colors">
+                      <div className="text-xs font-black text-white truncate leading-tight group-hover:text-[#ff2020] transition-colors">
                         {weaponTitle}
                       </div>
                       <div className="text-[11px] text-gray-400 truncate mt-0.5 font-medium">
@@ -378,12 +377,12 @@ export default function AddItemView({
           )}
         </div>
 
-        {/* RIGHT: Filter Sidebar with individual weapon filter without horizontal scrolling */}
-        <aside className="w-64 bg-[#0d0d10] border-l border-[#18181c] p-4 flex flex-col justify-between overflow-y-auto shrink-0 select-none">
+        {/* RIGHT: Filter Sidebar */}
+        <aside className="w-64 bg-[#060606] border-l border-[#141414] p-4 flex flex-col justify-between overflow-y-auto shrink-0 select-none">
           <div className="space-y-5">
-            <div className="flex items-center justify-between pb-2.5 border-b border-[#1c1e24]">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#181818]">
               <span className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
-                <SlidersHorizontal size={13} className="text-[#ff5500]" /> Filtros
+                <SlidersHorizontal size={13} className="text-[#ff2020]" /> Filtros
               </span>
               {(selectedRarities.length > 0 || selectedWeaponDefindexes.length > 0 || search) && (
                 <button
@@ -393,7 +392,7 @@ export default function AddItemView({
                     setSelectedWeaponDefindexes([]);
                     setSearch('');
                   }}
-                  className="text-[11px] text-[#ff5500] hover:underline cursor-pointer"
+                  className="text-[11px] text-[#ff2020] hover:underline cursor-pointer"
                 >
                   Limpar
                 </button>
@@ -422,7 +421,7 @@ export default function AddItemView({
                         className="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-0.5 px-1 rounded hover:bg-white/5 transition-all"
                       >
                         <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-all ${
-                          isChecked ? 'bg-[#ff5500] border-[#ff5500]' : 'border-[#2d2d38] bg-[#121216]'
+                          isChecked ? 'bg-[#ff2020] border-[#ff2020]' : 'border-[#242424] bg-[#0c0c0c]'
                         }`}>
                           {isChecked && <Check size={10} className="text-white" strokeWidth={3} />}
                         </div>
@@ -435,7 +434,7 @@ export default function AddItemView({
               )}
             </div>
 
-            {/* Armas Section (Direct individual weapon filter without horizontal scrolling) */}
+            {/* Armas Section */}
             {selectedSubTab === 'skins' && (
               <div>
                 <button
@@ -459,7 +458,7 @@ export default function AddItemView({
                         >
                           <div className="flex items-center gap-2 truncate">
                             <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all ${
-                              isChecked ? 'bg-[#ff5500] border-[#ff5500]' : 'border-[#2d2d38] bg-[#121216]'
+                              isChecked ? 'bg-[#ff2020] border-[#ff2020]' : 'border-[#242424] bg-[#0c0c0c]'
                             }`}>
                               {isChecked && <Check size={10} className="text-white" strokeWidth={3} />}
                             </div>
@@ -475,11 +474,11 @@ export default function AddItemView({
             )}
           </div>
 
-          {/* Bottom Action Button */}
-          <div className="pt-3 mt-4 border-t border-[#1c1e24]">
+          {/* Bottom Action Button in Vivid Red */}
+          <div className="pt-3 mt-4 border-t border-[#181818]">
             <button
               type="button"
-              className="w-full bg-[#ff5500] hover:bg-[#e64d00] text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition-all cursor-pointer"
+              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-bold py-2 px-3 rounded-lg text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer"
             >
               Ver {filteredList.length.toLocaleString('pt-BR')} resultados
             </button>

@@ -5,19 +5,21 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #09090b;
-  --bg-card: #101014;
-  --bg-card-hover: #15151a;
-  --bg-input: #121216;
+  --bg-dark: #000000;
+  --bg-surface: #080808;
+  --bg-card: #0d0d0d;
+  --bg-card-hover: #141414;
+  --bg-input: #0a0a0a;
   
-  --border-color: #1e1e26;
-  --border-glow: rgba(255, 85, 0, 0.25);
+  --border-color: #1a1a1a;
+  --border-glow: rgba(255, 32, 32, 0.35);
   
-  --cs-gold: #ff5500;
-  --cs-orange: #ff5500;
-  --cs-blue: #3d78f5;
-  --cs-t: #e87722;
-  --cs-ct: #4b82f8;
+  --cs-primary: #ff2020;
+  --cs-red: #ff2020;
+  --cs-gold: #ffd700;
+  --cs-blue: #2563eb;
+  --cs-t: #ff2020;
+  --cs-ct: #3b82f6;
   
   --rarity-covert: #eb4b4b;
   --rarity-classified: #d32ce6;
@@ -27,9 +29,9 @@
   --rarity-consumer: #b0c3d9;
   --rarity-contraband: #ffd700;
   
-  --text-main: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --text-dim: #71717a;
+  --text-main: #ffffff;
+  --text-muted: #999999;
+  --text-dim: #666666;
   
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Rajdhani', 'Orbitron', sans-serif;
@@ -41,9 +43,9 @@
   box-sizing: border-box;
 }
 
-body {
-  background-color: #09090b;
-  color: var(--text-main);
+html, body {
+  background-color: #000000 !important;
+  color: #ffffff;
   font-family: var(--font-main);
   min-height: 100vh;
   overflow-x: hidden;
@@ -51,18 +53,18 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
+  background: #222222;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #333333;
 }
 
 .font-display {
@@ -76,5 +78,5 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fadeIn 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

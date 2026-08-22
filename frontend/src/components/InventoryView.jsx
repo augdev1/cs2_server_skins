@@ -70,12 +70,11 @@ export default function InventoryView({
     });
   }
 
-  // 3. Regular Weapons with equipped skins or common weapons (AK, M4, AWP, Deagle, USP, Glock)
+  // 3. Regular Weapons with equipped skins or common weapons
   weapons.forEach(w => {
     const skin = equippedSkins[String(w.defindex)];
     const hasCustom = skin && Number(skin.weapon_paint_id) > 0;
     
-    // If has custom skin OR is a primary weapon, show in inventory
     if (hasCustom || ['weapon_ak47', 'weapon_m4a1_silencer', 'weapon_m4a1', 'weapon_awp', 'weapon_deagle', 'weapon_usp_silencer', 'weapon_glock'].includes(w.weapon_name)) {
       const skinInfo = hasCustom ? skinsMap[`${w.defindex}_${skin.weapon_paint_id}`] : null;
       inventoryItems.push({
@@ -86,7 +85,7 @@ export default function InventoryView({
         weaponTitle: w.name,
         skinTitle: skinInfo?.paint_name?.split('|')[1]?.trim() || (hasCustom ? `Paint #${skin.weapon_paint_id}` : 'Padrão'),
         image: skinInfo?.image || w.image,
-        rarityColor: skinInfo?.rarity_color || (hasCustom ? '#f0b232' : 'transparent'),
+        rarityColor: skinInfo?.rarity_color || (hasCustom ? '#ff2020' : 'transparent'),
         itemObj: w,
         hasCustom
       });
@@ -99,15 +98,15 @@ export default function InventoryView({
   });
 
   return (
-    <div className="space-y-4">
-      {/* Top Action Bar */}
-      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[#101014] p-3.5 rounded-xl border border-[#1e1e24] shadow-sm">
+    <div className="space-y-4 bg-[#000000] text-white">
+      {/* Top Action Bar in True Black */}
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[#090909] p-3.5 rounded-xl border border-[#171717] shadow-sm">
         {/* Left Side: + Adicionar Item button & Toggles */}
         <div className="flex items-center flex-wrap gap-3">
           <button
             type="button"
             onClick={onOpenAdd}
-            className="flex items-center gap-2 bg-[#ff5500] hover:bg-[#e64d00] text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm transition-all cursor-pointer hover:scale-[1.02] active:scale-95"
+            className="flex items-center gap-2 bg-[#ff2020] hover:bg-[#e01515] text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95"
           >
             <Plus size={16} strokeWidth={3} />
             <span>Adicionar Item</span>
@@ -116,11 +115,11 @@ export default function InventoryView({
           {/* 3D Inspect Toggle */}
           <div 
             onClick={() => setInspect3d(!inspect3d)}
-            className="flex items-center gap-2 bg-[#141418] border border-[#22222a] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-600 transition-all select-none"
+            className="flex items-center gap-2 bg-[#0e0e0e] border border-[#1e1e1e] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-500 transition-all select-none"
           >
             <span className="text-gray-300 font-semibold">Inspecionar 3D</span>
-            <span className="bg-[#ff5500] text-white text-[8px] font-black px-1 rounded uppercase">NOVO</span>
-            <div className={`w-8 h-4 rounded-full transition-colors relative ${inspect3d ? 'bg-[#ff5500]' : 'bg-[#2a2a34]'}`}>
+            <span className="bg-[#ff2020] text-white text-[8px] font-black px-1 rounded uppercase">NOVO</span>
+            <div className={`w-8 h-4 rounded-full transition-colors relative ${inspect3d ? 'bg-[#ff2020]' : 'bg-[#222222]'}`}>
               <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${inspect3d ? 'right-0.5' : 'left-0.5'}`} />
             </div>
           </div>
@@ -128,10 +127,10 @@ export default function InventoryView({
           {/* Fast Add Toggle */}
           <div 
             onClick={() => setFastAdd(!fastAdd)}
-            className="flex items-center gap-2 bg-[#141418] border border-[#22222a] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-600 transition-all select-none"
+            className="flex items-center gap-2 bg-[#0e0e0e] border border-[#1e1e1e] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-500 transition-all select-none"
           >
             <span className="text-gray-300 font-semibold">Adição rápida</span>
-            <div className={`w-8 h-4 rounded-full transition-colors relative ${fastAdd ? 'bg-[#ff5500]' : 'bg-[#2a2a34]'}`}>
+            <div className={`w-8 h-4 rounded-full transition-colors relative ${fastAdd ? 'bg-[#ff2020]' : 'bg-[#222222]'}`}>
               <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${fastAdd ? 'right-0.5' : 'left-0.5'}`} />
             </div>
           </div>
@@ -148,13 +147,13 @@ export default function InventoryView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar no inventário..."
-              className="w-full bg-[#141418] border border-[#22222a] pl-9 pr-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff5500] transition-all"
+              className="w-full bg-[#0e0e0e] border border-[#1e1e1e] pl-9 pr-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
             />
           </div>
         </div>
       </div>
 
-      {/* Item Counter Bar (without unused buttons) */}
+      {/* Item Counter Bar */}
       <div className="flex items-center justify-between text-xs text-gray-400 px-1">
         <span className="font-semibold">
           Inventário <span className="text-white font-bold">{team === 2 ? 'Terrorista (TR)' : 'Contra-Terrorista (CT)'}</span>
@@ -166,9 +165,9 @@ export default function InventoryView({
 
       {/* Chat Command Notification Banner */}
       {showNotice && (
-        <div className="bg-[#101014] border border-[#1e1e24] px-4 py-2.5 rounded-lg flex items-center justify-between text-xs text-gray-300">
+        <div className="bg-[#090909] border border-[#181818] px-4 py-2.5 rounded-lg flex items-center justify-between text-xs text-gray-300">
           <div className="flex items-center gap-2">
-            <Info size={15} className="text-[#ff5500] shrink-0" />
+            <Info size={15} className="text-[#ff2020] shrink-0" />
             <span>
               Para atualizar suas skins no jogo, use o comando <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded">!ws</strong> no chat ou aguarde a troca de round.
             </span>
@@ -183,22 +182,22 @@ export default function InventoryView({
         </div>
       )}
 
-      {/* Main Inventory Grid (6 Columns) */}
+      {/* Main Inventory Grid (6 Columns) in Pure Black Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         {filteredItems.map((item) => {
           return (
             <div
               key={item.id}
               onClick={() => onCustomizeWeapon(item.itemObj)}
-              className="group bg-[#101014] hover:bg-[#15151a] border border-[#1e1e26] hover:border-[#ff5500]/60 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
+              className="group bg-[#0a0a0a] hover:bg-[#111111] border border-[#181818] hover:border-[#ff2020]/70 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
               style={{
-                borderBottomColor: item.rarityColor !== 'transparent' ? item.rarityColor : '#22222a',
+                borderBottomColor: item.rarityColor !== 'transparent' ? item.rarityColor : '#1e1e1e',
                 borderBottomWidth: '2.5px'
               }}
             >
               {/* Top Team Indicator Dots */}
               <div className="flex justify-end gap-1 mb-1">
-                <span className={`w-2 h-2 rounded-full ${team === 2 ? 'bg-orange-500' : 'bg-blue-500'}`} />
+                <span className={`w-2 h-2 rounded-full ${team === 2 ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]'}`} />
                 <span className="w-2 h-2 rounded-full bg-blue-500 opacity-40" />
               </div>
 
@@ -207,7 +206,7 @@ export default function InventoryView({
                 <img
                   src={item.image}
                   alt={item.weaponTitle}
-                  className="max-w-[150px] max-h-[85px] object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-200"
+                  className="max-w-[150px] max-h-[85px] object-contain drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform duration-200"
                   onError={(e) => {
                     e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png';
                   }}
@@ -216,7 +215,7 @@ export default function InventoryView({
 
               {/* Title and Skin info */}
               <div className="mt-2 pt-2 border-t border-white/5">
-                <div className="text-xs font-black text-white truncate leading-tight group-hover:text-[#ff5500] transition-colors">
+                <div className="text-xs font-black text-white truncate leading-tight group-hover:text-[#ff2020] transition-colors">
                   {item.weaponTitle}
                 </div>
                 <div className="text-[11px] text-gray-400 truncate mt-0.5 font-medium">
