@@ -5,7 +5,8 @@ import {
   Sparkles,
   Sliders,
   UserCheck,
-  Music
+  Music,
+  Eye
 } from 'lucide-react';
 import TeamSelector from './TeamSelector';
 
@@ -69,7 +70,7 @@ export default function InventoryView({
       type: 'glove',
       category: 'gloves',
       defindex: equippedGloveDef,
-      weaponTitle: gloveItem.glove_type || '★ Gloves',
+      weaponTitle: gloveItem.glove_type || '★ Luvas',
       skinTitle: gloveItem.paint_name?.split('|')[1]?.trim() || gloveItem.name,
       image: gloveItem.image,
       rarityColor: '#ffd700',
@@ -79,7 +80,7 @@ export default function InventoryView({
     });
   }
 
-  // 3. Equipped Agent (Matches by exact CS2 model string, name or team)
+  // 3. Equipped Agent
   const equippedAgentModel = currentTeamEquipment.agent;
   const agentItem = agents.find(a => a.model === equippedAgentModel) || 
                     agents.find(a => a.name === equippedAgentModel) || 
@@ -151,12 +152,16 @@ export default function InventoryView({
     }
   });
 
-  // Filter items based on search and category
+  // Strict Category Filter
   const filteredItems = inventoryItems.filter(item => {
-    const term = search.toLowerCase();
-    const matchSearch = item.weaponTitle.toLowerCase().includes(term) || item.skinTitle.toLowerCase().includes(term);
-    if (!matchSearch) return false;
+    // 1. Search Query
+    const term = search.trim().toLowerCase();
+    if (term) {
+      const matchSearch = item.weaponTitle.toLowerCase().includes(term) || item.skinTitle.toLowerCase().includes(term);
+      if (!matchSearch) return false;
+    }
 
+    // 2. Strict Filter Pills
     if (activeCategoryFilter === 'all') return true;
     if (activeCategoryFilter === 'knives') return item.type === 'knife';
     if (activeCategoryFilter === 'gloves') return item.type === 'glove';
@@ -228,7 +233,7 @@ export default function InventoryView({
           Inventário <span className="text-white font-bold">{team === 2 ? 'Terrorista (TR)' : 'Contra-Terrorista (CT)'}</span>
         </span>
         <span className="text-gray-500">
-          Mostrando <strong className="text-[#ff2020]">{filteredItems.length}</strong> itens equipados
+          Mostrando <strong className="text-[#ff2020]">{filteredItems.length}</strong> itens {activeCategoryFilter !== 'all' ? `em ${activeCategoryFilter}` : 'equipados'}
         </span>
       </div>
 
@@ -240,6 +245,8 @@ export default function InventoryView({
             onClick={() => {
               if (item.isAgent) {
                 onOpenAdd('agents');
+              } else if (item.isGlove) {
+                onOpenAdd('gloves');
               } else if (item.isMusic) {
                 onOpenAdd('music');
               } else {
@@ -293,8 +300,8 @@ export default function InventoryView({
             {/* Hover Action Overlay */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl z-20">
               <div className="flex items-center gap-1.5 bg-[#ff2020] text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                {item.isAgent || item.isMusic ? <UserCheck size={13} /> : <Sliders size={13} />}
-                <span>{item.isAgent ? 'Trocar Agente' : item.isMusic ? 'Trocar Música' : 'Personalizar'}</span>
+                {item.isAgent ? <UserCheck size={13} /> : item.isGlove ? <Eye size={13} /> : item.isMusic ? <Music size={13} /> : <Sliders size={13} />}
+                <span>{item.isAgent ? 'Trocar Agente' : item.isGlove ? 'Trocar Luvas' : item.isMusic ? 'Trocar Música' : 'Personalizar'}</span>
               </div>
             </div>
           </div>
