@@ -12,6 +12,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [isDevLoginOpen, setIsDevLoginOpen] = useState(false);
   const [currentView, setCurrentView] = useState('inventory'); // 'inventory' | 'add'
+  const [addInitialTab, setAddInitialTab] = useState('skins');
   const [team, setTeam] = useState(2); // 2 = TR, 3 = CT
 
   // Data states
@@ -163,17 +164,20 @@ export default function App() {
     // 1. Se for Agente (Personagem)
     if (item.isAgent || item.agent_id) {
       const agentTeam = item.team === 'ct' ? 3 : 2;
+      const modelToSave = item.model || item.name;
       try {
-        await playerService.updateAgent(agentTeam, item.name);
+        await playerService.updateAgent(agentTeam, modelToSave);
         setEquipment(prev => {
           const next = JSON.parse(JSON.stringify(prev || {}));
           const tKey = agentTeam === 3 ? 'ct' : 't';
           if (!next[tKey]) next[tKey] = { skins: {} };
-          next[tKey].agent = item.name;
+          next[tKey].agent = modelToSave;
           localStorage.setItem('cs2_equipment_cache', JSON.stringify(next));
           return next;
         });
         showToast(`Agente '${item.name}' equipado com sucesso para o lado ${agentTeam === 3 ? 'CT' : 'TR'}!`);
+        // Redireciona imediatamente de volta para o inventário
+        setCurrentView('inventory');
       } catch (err) {
         console.error('Erro ao equipar agente:', err);
         showToast('Erro ao equipar agente no servidor.', 'error');
@@ -194,6 +198,7 @@ export default function App() {
           return next;
         });
         showToast(`Trilha Sonora '${item.name}' equipada com sucesso!`);
+        setCurrentView('inventory');
       } catch (err) {
         console.error('Erro ao equipar trilha sonora:', err);
         showToast('Erro ao equipar trilha sonora.', 'error');
@@ -280,7 +285,10 @@ export default function App() {
         <>
           <Sidebar
             currentView={currentView}
-            onNavigate={(view) => setCurrentView(view)}
+            onNavigate={(view) => {
+              if (view === 'add') setAddInitialTab('skins');
+              setCurrentView(view);
+            }}
             user={user}
             onOpenDevLogin={() => setIsDevLoginOpen(false)}
             onLogout={handleLogout}
@@ -296,6 +304,7 @@ export default function App() {
                 gloves={gloves}
                 agents={agents}
                 music={music}
+                initialSubTab={addInitialTab}
                 onBack={() => setCurrentView('inventory')}
                 onSelectSkin={handleSelectSkinFromAddView}
               />
@@ -312,7 +321,10 @@ export default function App() {
                   setTeam={setTeam}
                   equipment={equipment}
                   skinsMap={skinsMap}
-                  onOpenAdd={() => setCurrentView('add')}
+                  onOpenAdd={(tab = 'skins') => {
+                    setAddInitialTab(tab);
+                    setCurrentView('add');
+                  }}
                   onCustomizeWeapon={(weaponObj) => {
                     setInitialCustomizerPaint(null);
                     setCustomizingWeapon(weaponObj);

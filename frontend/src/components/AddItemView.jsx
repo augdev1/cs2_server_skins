@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Search, 
@@ -13,16 +13,17 @@ import {
 import KnifeIcon from './KnifeIcon';
 
 export default function AddItemView({ 
-  skins, 
-  weapons, 
-  knives, 
-  gloves, 
-  agents, 
-  music, 
+  skins = [], 
+  weapons = [], 
+  knives = [], 
+  gloves = [], 
+  agents = [], 
+  music = [], 
   onBack, 
-  onSelectSkin 
+  onSelectSkin,
+  initialSubTab = 'skins'
 }) {
-  const [selectedSubTab, setSelectedSubTab] = useState('skins'); // skins, knives, gloves, agents, music
+  const [selectedSubTab, setSelectedSubTab] = useState(initialSubTab); // skins, knives, gloves, agents, music
   const [search, setSearch] = useState('');
   const [gridMode, setGridMode] = useState('large'); // large | compact
   
@@ -35,6 +36,12 @@ export default function AddItemView({
 
   const [isTypeSectionOpen, setIsTypeSectionOpen] = useState(true);
   const [isRaritiesOpen, setIsRaritiesOpen] = useState(true);
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setSelectedSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
 
   // Rarities definition
   const RARITIES = [
@@ -49,87 +56,83 @@ export default function AddItemView({
 
   // List of all Knife Types
   const KNIFE_TYPES = useMemo(() => [
-    { defindex: 500, label: 'Bayonet' },
-    { defindex: 514, label: 'Bowie' },
-    { defindex: 515, label: 'Butterfly' },
-    { defindex: 503, label: 'Classic' },
-    { defindex: 512, label: 'Falchion' },
-    { defindex: 505, label: 'Flip' },
-    { defindex: 506, label: 'Gut' },
-    { defindex: 509, label: 'Huntsman' },
-    { defindex: 507, label: 'Karambit' },
-    { defindex: 508, label: 'M9 Bayonet' },
-    { defindex: 520, label: 'Navaja' },
-    { defindex: 521, label: 'Nomad' },
-    { defindex: 517, label: 'Paracord' },
-    { defindex: 516, label: 'Shadow Daggers' },
-    { defindex: 525, label: 'Skeleton' },
-    { defindex: 522, label: 'Stiletto' },
-    { defindex: 518, label: 'Survival' },
-    { defindex: 523, label: 'Talon' },
-    { defindex: 519, label: 'Ursus' },
-    { defindex: 526, label: 'Kukri' }
+    { defindex: 500, name: 'Bayonet', matchStr: 'Bayonet', isBayonet: true },
+    { defindex: 503, name: 'Classic Knife', matchStr: 'Classic' },
+    { defindex: 505, name: 'Flip Knife', matchStr: 'Flip' },
+    { defindex: 506, name: 'Gut Knife', matchStr: 'Gut' },
+    { defindex: 507, name: 'Karambit', matchStr: 'Karambit' },
+    { defindex: 508, name: 'M9 Bayonet', matchStr: 'M9 Bayonet' },
+    { defindex: 509, name: 'Huntsman', matchStr: 'Huntsman' },
+    { defindex: 512, name: 'Falchion', matchStr: 'Falchion' },
+    { defindex: 514, name: 'Bowie', matchStr: 'Bowie' },
+    { defindex: 515, name: 'Butterfly', matchStr: 'Butterfly' },
+    { defindex: 516, name: 'Shadow Daggers', matchStr: 'Shadow Daggers' },
+    { defindex: 517, name: 'Paracord', matchStr: 'Paracord' },
+    { defindex: 518, name: 'Survival Knife', matchStr: 'Survival' },
+    { defindex: 519, name: 'Ursus', matchStr: 'Ursus' },
+    { defindex: 520, name: 'Navaja', matchStr: 'Navaja' },
+    { defindex: 521, name: 'Nomad', matchStr: 'Nomad' },
+    { defindex: 522, name: 'Stiletto', matchStr: 'Stiletto' },
+    { defindex: 523, name: 'Talon', matchStr: 'Talon' },
+    { defindex: 525, name: 'Skeleton', matchStr: 'Skeleton' },
+    { defindex: 526, name: 'Kukri', matchStr: 'Kukri' }
   ], []);
 
-  // List of all Glove Types
+  // Primary Weapons for filter pills
+  const PRIMARY_WEAPONS = useMemo(() => [
+    { defindex: 7, name: 'AK-47' },
+    { defindex: 16, name: 'M4A4' },
+    { defindex: 60, name: 'M4A1-S' },
+    { defindex: 9, name: 'AWP' },
+    { defindex: 1, name: 'Desert Eagle' },
+    { defindex: 61, name: 'USP-S' },
+    { defindex: 4, name: 'Glock-18' },
+    { defindex: 40, name: 'SSG 08' },
+    { defindex: 13, name: 'Galil AR' },
+    { defindex: 10, name: 'FAMAS' },
+    { defindex: 8, name: 'AUG' },
+    { defindex: 39, name: 'SG 553' },
+    { defindex: 38, name: 'SCAR-20' },
+    { defindex: 11, name: 'G3SG1' },
+    { defindex: 36, name: 'P250' },
+    { defindex: 3, name: 'Five-SeveN' },
+    { defindex: 30, name: 'Tec-9' },
+    { defindex: 63, name: 'CZ75-Auto' },
+    { defindex: 2, name: 'Dual Berettas' },
+    { defindex: 64, name: 'R8 Revolver' },
+    { defindex: 32, name: 'P2000' },
+    { defindex: 17, name: 'MAC-10' },
+    { defindex: 34, name: 'MP9' },
+    { defindex: 19, name: 'P90' },
+    { defindex: 33, name: 'MP7' },
+    { defindex: 23, name: 'MP5-SD' },
+    { defindex: 24, name: 'UMP-45' }
+  ], []);
+
+  // Glove Types
   const GLOVE_TYPES = useMemo(() => [
-    { type: 'Sport Gloves', label: 'Sport Gloves' },
-    { type: 'Driver Gloves', label: 'Driver Gloves' },
-    { type: 'Specialist Gloves', label: 'Specialist Gloves' },
-    { type: 'Moto Gloves', label: 'Moto Gloves' },
-    { type: 'Hand Wraps', label: 'Hand Wraps' },
-    { type: 'Bloodhound Gloves', label: 'Bloodhound' },
-    { type: 'Hydra Gloves', label: 'Hydra' },
-    { type: 'Broken Fang Gloves', label: 'Broken Fang' }
+    { id: 'Sport Gloves', name: 'Sport Gloves' },
+    { id: 'Driver Gloves', name: 'Driver Gloves' },
+    { id: 'Specialist Gloves', name: 'Specialist Gloves' },
+    { id: 'Moto Gloves', name: 'Moto Gloves' },
+    { id: 'Hand Wraps', name: 'Hand Wraps' },
+    { id: 'Bloodhound Gloves', name: 'Bloodhound' },
+    { id: 'Hydra Gloves', name: 'Hydra' },
+    { id: 'Broken Fang Gloves', name: 'Broken Fang' }
   ], []);
 
-  // List of all Weapons
-  const WEAPON_OPTIONS = useMemo(() => [
-    { defindex: 7, label: 'AK-47' },
-    { defindex: 16, label: 'M4A4' },
-    { defindex: 60, label: 'M4A1-S' },
-    { defindex: 9, label: 'AWP' },
-    { defindex: 1, label: 'Desert Eagle' },
-    { defindex: 61, label: 'USP-S' },
-    { defindex: 4, label: 'Glock-18' },
-    { defindex: 40, label: 'SSG 08' },
-    { defindex: 13, label: 'Galil AR' },
-    { defindex: 10, label: 'FAMAS' },
-    { defindex: 8, label: 'AUG' },
-    { defindex: 39, label: 'SG 553' },
-    { defindex: 38, label: 'SCAR-20' },
-    { defindex: 11, label: 'G3SG1' },
-    { defindex: 36, label: 'P250' },
-    { defindex: 3, label: 'Five-SeveN' },
-    { defindex: 30, label: 'Tec-9' },
-    { defindex: 63, label: 'CZ75-Auto' },
-    { defindex: 2, label: 'Dual Berettas' },
-    { defindex: 64, label: 'R8 Revolver' },
-    { defindex: 32, label: 'P2000' },
-    { defindex: 17, label: 'MAC-10' },
-    { defindex: 34, label: 'MP9' },
-    { defindex: 19, label: 'P90' },
-    { defindex: 33, label: 'MP7' },
-    { defindex: 23, label: 'MP5-SD' },
-    { defindex: 24, label: 'UMP-45' },
-    { defindex: 26, label: 'PP-Bizon' },
-    { defindex: 35, label: 'Nova' },
-    { defindex: 25, label: 'XM1014' },
-    { defindex: 27, label: 'MAG-7' },
-    { defindex: 29, label: 'Sawed-Off' },
-    { defindex: 28, label: 'Negev' },
-    { defindex: 14, label: 'M249' }
-  ], []);
-
+  // Toggle Rarity Selection
   const toggleRarity = (rarityId) => {
     setSelectedRarities(prev => 
-      prev.includes(rarityId) ? prev.filter(r => r !== rarityId) : [...prev, rarityId]
+      prev.includes(rarityId) 
+        ? prev.filter(r => r !== rarityId) 
+        : [...prev, rarityId]
     );
   };
 
-  // Reset filters when switching main subtab
-  const handleTabChange = (newTab) => {
-    setSelectedSubTab(newTab);
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSearch('');
     setSelectedWeaponDefindex(null);
     setSelectedKnifeDefindex(null);
     setSelectedGloveType(null);
@@ -191,6 +194,7 @@ export default function AddItemView({
         name: a.name,
         paint_name: a.name,
         image: a.image,
+        model: a.model,
         rarity_name: a.rarity || 'Superior Agent',
         rarity_color: '#d32ce6',
         isAgent: true,
@@ -248,8 +252,8 @@ export default function AddItemView({
             <h2 className="text-sm font-bold text-white leading-tight font-display tracking-wide">
               Criar Item
             </h2>
-            <p className="text-[11px] text-gray-400">
-              Passo 1 de 2 &bull; escolha a base
+            <p className="text-[11px] text-gray-500 font-semibold">
+              Passo 1 de 2 • escolha a base
             </p>
           </div>
         </div>
@@ -257,259 +261,289 @@ export default function AddItemView({
         <button
           type="button"
           onClick={onBack}
-          className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e0e0e] border border-[#1e1e1e] hover:bg-[#161616] text-gray-300 transition-all cursor-pointer"
+          className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-[#222222] hover:bg-white/5 transition-all cursor-pointer"
         >
           Cancelar
         </button>
       </header>
 
-      {/* Sub-navigation Categories Tabs */}
-      <div className="border-b border-[#141414] bg-[#040404] px-6 py-2">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
-          {[
-            { id: 'skins', label: 'Skins' },
-            { id: 'luvas', label: 'Luvas', target: 'gloves' },
-            { id: 'facas', label: 'Facas', target: 'knives' },
-            { id: 'agentes', label: 'Agentes', target: 'agents' },
-            { id: 'musica', label: 'Kit de música', target: 'music' }
-          ].map(tab => {
-            const activeId = tab.target || tab.id;
-            const isSelected = selectedSubTab === activeId;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => handleTabChange(activeId)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#ff2020] text-white shadow-[0_0_15px_rgba(255,32,32,0.5)] scale-[1.02]'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Search Bar & Grid Controls */}
-      <div className="px-6 py-3 border-b border-[#141414] bg-[#000000] flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:max-w-md">
-          <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={`Buscar em ${selectedSubTab === 'knives' ? 'facas' : selectedSubTab === 'gloves' ? 'luvas' : 'skins'}...`}
-            className="w-full bg-[#0a0a0a] border border-[#1a1a1a] pl-9 pr-4 py-1.5 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
-          />
-        </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end text-xs">
-          <div className="flex items-center bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-0.5">
-            <button
-              type="button"
-              onClick={() => setGridMode('large')}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                gridMode === 'large' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Grande
-            </button>
-            <button
-              type="button"
-              onClick={() => setGridMode('compact')}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                gridMode === 'compact' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Compacto
-            </button>
+      {/* Main Container */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Central Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#000000] p-5 space-y-4 overflow-y-auto">
+          {/* Top Sub-Navigation Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#141414]">
+            {[
+              { id: 'skins', label: 'Skins' },
+              { id: 'luvas', label: 'Luvas', tabId: 'gloves' },
+              { id: 'facas', label: 'Facas', tabId: 'knives' },
+              { id: 'agentes', label: 'Agentes', tabId: 'agents' },
+              { id: 'musica', label: 'Kit de música', tabId: 'music' }
+            ].map(tab => {
+              const currentTabId = tab.tabId || tab.id;
+              const isActive = selectedSubTab === currentTabId;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSubTab(currentTabId);
+                    handleClearFilters();
+                  }}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
+                    isActive
+                      ? 'bg-[#ff2020] text-white shadow-[0_0_15px_rgba(255,32,32,0.4)]'
+                      : 'text-gray-400 hover:text-white hover:bg-[#0d0d0d]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
-          <span className="text-gray-400 font-medium">
-            <strong className="text-white font-bold">{filteredList.length.toLocaleString('pt-BR')}</strong> itens
-          </span>
-        </div>
-      </div>
+          {/* Search and Grid Control Bar */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Buscar em ${selectedSubTab}...`}
+                className="w-full bg-[#080808] border border-[#1a1a1a] pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
+              />
+            </div>
 
-      {/* Main Body: Items Grid + Right Filter Sidebar */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* CENTER / LEFT: Items Grid */}
-        <div className="flex-1 p-5 overflow-y-auto bg-[#000000]">
+            {/* Grid display mode toggles & count */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-[#080808] p-1 rounded-xl border border-[#1a1a1a]">
+                <button
+                  type="button"
+                  onClick={() => setGridMode('large')}
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    gridMode === 'large'
+                      ? 'bg-[#ff2020] text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Grande
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGridMode('compact')}
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    gridMode === 'compact'
+                      ? 'bg-[#ff2020] text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Compacto
+                </button>
+              </div>
+
+              <span className="text-xs text-gray-500 font-semibold px-2">
+                {filteredList.length} itens
+              </span>
+            </div>
+          </div>
+
+          {/* Items Grid */}
           {filteredList.length === 0 ? (
-            <div className="text-center py-24 text-gray-500 text-xs">
-              Nenhum item encontrado com os filtros selecionados.
+            <div className="flex-1 flex flex-col items-center justify-center py-20 text-gray-500 text-xs">
+              <p>Nenhum item encontrado com os filtros selecionados.</p>
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="mt-3 text-[#ff2020] hover:underline cursor-pointer"
+              >
+                Limpar filtros
+              </button>
             </div>
           ) : (
-            <div className={`grid gap-3 ${
+            <div className={`grid gap-3.5 ${
               gridMode === 'large'
                 ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
-                : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8'
+                : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8'
             }`}>
-              {filteredList.map((item, index) => {
-                const parts = (item.paint_name || item.name || '').split('|');
-                const weaponTitle = parts[0]?.trim() || item.name;
-                const skinTitle = parts[1]?.trim() || '';
-                const rarityColor = item.rarity_color || '#ffd700';
+              {filteredList.map((item, idx) => (
+                <div
+                  key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || idx}`}
+                  onClick={() => onSelectSkin(item)}
+                  className="group relative bg-[#080808] hover:bg-[#101010] border border-[#181818] hover:border-[#ff2020] rounded-2xl p-3 flex flex-col items-center justify-between min-h-[175px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
+                >
+                  {/* Top Item Category / Model */}
+                  <div className="w-full flex items-center justify-between z-10">
+                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate max-w-[80%]">
+                      {item.weapon_name?.replace('weapon_', '').replace('knife_', '').toUpperCase() || item.rarity_name}
+                    </span>
+                    {item.team && (
+                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase font-display ${
+                        item.team === 't' ? 'bg-[#ff2020]/20 text-[#ff2020] border border-[#ff2020]/40' : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                      }`}>
+                        {item.team.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
 
-                return (
-                  <div
-                    key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || index}`}
-                    onClick={() => onSelectSkin(item)}
-                    className="group bg-[#090909] hover:bg-[#111111] border border-[#161616] hover:border-[#ff2020]/70 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
-                    style={{
-                      borderBottomColor: rarityColor,
-                      borderBottomWidth: '2.5px'
-                    }}
-                  >
-                    {/* Skin Image */}
-                    <div className="w-full h-24 flex items-center justify-center my-1">
-                      <img
-                        src={item.image}
-                        alt={item.paint_name}
-                        className="max-w-[145px] max-h-[80px] object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform duration-200"
-                        onError={(e) => {
-                          e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png';
-                        }}
+                  {/* Item Image */}
+                  <div className="my-auto w-full flex items-center justify-center py-2 relative">
+                    <img
+                      src={item.image}
+                      alt={item.paint_name || item.name}
+                      className="max-h-[85px] max-w-[120px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)] group-hover:scale-110 transition-transform duration-300"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png';
+                      }}
+                    />
+                  </div>
+
+                  {/* Item Details */}
+                  <div className="w-full text-center z-10 pt-1.5 border-t border-[#141414]">
+                    <p className="text-xs font-bold text-white truncate group-hover:text-[#ff2020] transition-colors">
+                      {item.paint_name || item.name}
+                    </p>
+                    <div className="flex items-center justify-center gap-1.5 mt-0.5">
+                      <span 
+                        className="w-1.5 h-1.5 rounded-full inline-block"
+                        style={{ backgroundColor: item.rarity_color || '#ff2020' }}
                       />
-                    </div>
-
-                    {/* Skin Text Details */}
-                    <div className="mt-2 pt-2 border-t border-white/5">
-                      <div className="text-xs font-black text-white truncate leading-tight group-hover:text-[#ff2020] transition-colors">
-                        {weaponTitle}
-                      </div>
-                      <div className="text-[11px] text-gray-400 truncate mt-0.5 font-medium">
-                        {skinTitle || 'Padrão'}
-                      </div>
+                      <span className="text-[9px] text-gray-500 truncate">
+                        {item.rarity_name}
+                      </span>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
 
-        {/* RIGHT: Filter Sidebar matching Firegames exactly */}
-        <aside className="w-64 bg-[#060606] border-l border-[#141414] p-4 flex flex-col justify-between overflow-y-auto shrink-0 select-none">
+        {/* Right Sidebar Filters in Pure Jet Black */}
+        <aside className="w-72 bg-[#060606] border-l border-[#141414] p-4 flex flex-col justify-between hidden lg:flex select-none overflow-y-auto">
           <div className="space-y-5">
-            <div className="flex items-center justify-between pb-2.5 border-b border-[#181818]">
-              <span className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider font-display">
-                <SlidersHorizontal size={13} className="text-[#ff2020]" /> Filtros
-              </span>
-              {(selectedRarities.length > 0 || selectedWeaponDefindex || selectedKnifeDefindex || selectedGloveType || selectedAgentTeam || search) && (
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[#141414] pb-3">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal size={14} className="text-[#ff2020]" />
+                <span className="text-xs font-black uppercase text-white font-display tracking-wider">
+                  Filtros
+                </span>
+              </div>
+
+              {(selectedWeaponDefindex || selectedKnifeDefindex || selectedGloveType || selectedAgentTeam || selectedRarities.length > 0) && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedRarities([]);
-                    setSelectedWeaponDefindex(null);
-                    setSelectedKnifeDefindex(null);
-                    setSelectedGloveType(null);
-                    setSelectedAgentTeam(null);
-                    setSearch('');
-                  }}
-                  className="text-[11px] text-[#ff2020] hover:underline cursor-pointer"
+                  onClick={handleClearFilters}
+                  className="text-[10px] text-[#ff2020] hover:underline font-bold cursor-pointer"
                 >
                   Limpar
                 </button>
               )}
             </div>
 
-            {/* DYNAMIC SECTION: FACAS / ARMAS / LUVAS / AGENTES PILLS */}
+            {/* SubTab Specific Filters (Armas, Facas, Luvas, Agentes) */}
             <div>
-              <button
-                type="button"
+              <div 
                 onClick={() => setIsTypeSectionOpen(!isTypeSectionOpen)}
-                className="w-full flex items-center justify-between text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2.5 cursor-pointer"
+                className="flex items-center justify-between text-xs font-extrabold text-gray-300 uppercase font-display cursor-pointer mb-2.5"
               >
                 <span>
-                  {selectedSubTab === 'knives' ? 'Facas' :
-                   selectedSubTab === 'gloves' ? 'Luvas' :
-                   selectedSubTab === 'agents' ? 'Agentes' :
-                   selectedSubTab === 'music' ? 'Músicas' : 'Armas'}
+                  {selectedSubTab === 'skins' ? 'Armas' : 
+                   selectedSubTab === 'knives' ? 'Modelos de Facas' : 
+                   selectedSubTab === 'gloves' ? 'Tipos de Luvas' : 
+                   selectedSubTab === 'agents' ? 'Times de Agentes' : 'Categorias'}
                 </span>
-                {isTypeSectionOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-              </button>
+                {isTypeSectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </div>
 
               {isTypeSectionOpen && (
-                <div className="flex flex-wrap gap-1.5 max-h-80 overflow-y-auto pr-1">
-                  {/* 1. KNIFE PILLS */}
-                  {selectedSubTab === 'knives' && KNIFE_TYPES.map(k => {
-                    const isSelected = Number(selectedKnifeDefindex) === Number(k.defindex);
+                <div className="flex flex-wrap gap-1.5 max-h-[300px] overflow-y-auto pr-1">
+                  {/* 1. Skins Tab (Armas) */}
+                  {selectedSubTab === 'skins' && PRIMARY_WEAPONS.map((wpn) => {
+                    const isSelected = selectedWeaponDefindex === wpn.defindex;
                     return (
                       <button
-                        key={k.defindex}
+                        key={wpn.defindex}
                         type="button"
-                        onClick={() => setSelectedKnifeDefindex(isSelected ? null : k.defindex)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        onClick={() => setSelectedWeaponDefindex(isSelected ? null : wpn.defindex)}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSelected
                             ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
-                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                            : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-700'
                         }`}
                       >
-                        {k.label}
+                        <span>{wpn.name}</span>
+                        {isSelected && <Check size={12} strokeWidth={3} />}
                       </button>
                     );
                   })}
 
-                  {/* 2. WEAPON PILLS */}
-                  {selectedSubTab === 'skins' && WEAPON_OPTIONS.map(w => {
-                    const isSelected = Number(selectedWeaponDefindex) === Number(w.defindex);
+                  {/* 2. Knives Tab (Modelos de Facas) */}
+                  {selectedSubTab === 'knives' && KNIFE_TYPES.map((knife) => {
+                    const isSelected = selectedKnifeDefindex === knife.defindex;
                     return (
                       <button
-                        key={w.defindex}
+                        key={knife.defindex}
                         type="button"
-                        onClick={() => setSelectedWeaponDefindex(isSelected ? null : w.defindex)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        onClick={() => setSelectedKnifeDefindex(isSelected ? null : knife.defindex)}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSelected
                             ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
-                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                            : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-700'
                         }`}
                       >
-                        {w.label}
+                        <KnifeIcon knifeType={knife.name} size={14} className="opacity-80" />
+                        <span>{knife.name}</span>
+                        {isSelected && <Check size={12} strokeWidth={3} />}
                       </button>
                     );
                   })}
 
-                  {/* 3. GLOVE PILLS */}
-                  {selectedSubTab === 'gloves' && GLOVE_TYPES.map(g => {
-                    const isSelected = selectedGloveType === g.type;
+                  {/* 3. Gloves Tab */}
+                  {selectedSubTab === 'gloves' && GLOVE_TYPES.map((glove) => {
+                    const isSelected = selectedGloveType === glove.id;
                     return (
                       <button
-                        key={g.type}
+                        key={glove.id}
                         type="button"
-                        onClick={() => setSelectedGloveType(isSelected ? null : g.type)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        onClick={() => setSelectedGloveType(isSelected ? null : glove.id)}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSelected
                             ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
-                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                            : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-700'
                         }`}
                       >
-                        {g.label}
+                        <span>{glove.name}</span>
+                        {isSelected && <Check size={12} strokeWidth={3} />}
                       </button>
                     );
                   })}
 
-                  {/* 4. AGENT PILLS */}
+                  {/* 4. Agents Tab */}
                   {selectedSubTab === 'agents' && [
-                    { team: 't', label: 'Terroristas (TR)' },
-                    { team: 'ct', label: 'Contra-Terroristas (CT)' }
-                  ].map(a => {
-                    const isSelected = selectedAgentTeam === a.team;
+                    { id: 't', label: 'Terroristas (TR)', icon: Flame, color: 'text-[#ff2020]' },
+                    { id: 'ct', label: 'Contra-Terroristas (CT)', icon: Shield, color: 'text-blue-400' }
+                  ].map((team) => {
+                    const isSelected = selectedAgentTeam === team.id;
+                    const IconComp = team.icon;
                     return (
                       <button
-                        key={a.team}
+                        key={team.id}
                         type="button"
-                        onClick={() => setSelectedAgentTeam(isSelected ? null : a.team)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        onClick={() => setSelectedAgentTeam(isSelected ? null : team.id)}
+                        className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${
                           isSelected
                             ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
-                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                            : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-700'
                         }`}
                       >
-                        {a.label}
+                        <div className="flex items-center gap-2">
+                          <IconComp size={14} className={isSelected ? 'text-white' : team.color} />
+                          <span>{team.label}</span>
+                        </div>
+                        {isSelected && <Check size={14} strokeWidth={3} />}
                       </button>
                     );
                   })}
@@ -517,35 +551,41 @@ export default function AddItemView({
               )}
             </div>
 
-            {/* Raridades Section */}
+            {/* Rarities Filter Checklist */}
             <div>
-              <button
-                type="button"
+              <div 
                 onClick={() => setIsRaritiesOpen(!isRaritiesOpen)}
-                className="w-full flex items-center justify-between text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2 cursor-pointer"
+                className="flex items-center justify-between text-xs font-extrabold text-gray-300 uppercase font-display cursor-pointer mb-2.5"
               >
                 <span>Raridades</span>
-                {isRaritiesOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-              </button>
+                {isRaritiesOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </div>
 
               {isRaritiesOpen && (
-                <div className="space-y-1">
-                  {RARITIES.map(r => {
-                    const isChecked = selectedRarities.includes(r.id);
+                <div className="space-y-1.5">
+                  {RARITIES.map((rarity) => {
+                    const isChecked = selectedRarities.includes(rarity.id);
                     return (
-                      <label
-                        key={r.id}
-                        onClick={() => toggleRarity(r.id)}
-                        className="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-0.5 px-1 rounded hover:bg-white/5 transition-all"
+                      <div
+                        key={rarity.id}
+                        onClick={() => toggleRarity(rarity.id)}
+                        className="flex items-center gap-2.5 py-1 px-1.5 rounded-lg hover:bg-white/5 cursor-pointer text-xs"
                       >
                         <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-all ${
-                          isChecked ? 'bg-[#ff2020] border-[#ff2020]' : 'border-[#242424] bg-[#0c0c0c]'
+                          isChecked 
+                            ? 'bg-[#ff2020] border-[#ff2020]' 
+                            : 'border-[#333333] bg-[#0c0c0c]'
                         }`}>
-                          {isChecked && <Check size={10} className="text-white" strokeWidth={3} />}
+                          {isChecked && <Check size={11} strokeWidth={3} className="text-white" />}
                         </div>
-                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: r.color }} />
-                        <span>{r.label}</span>
-                      </label>
+                        <span 
+                          className="w-2 h-2 rounded-full inline-block"
+                          style={{ backgroundColor: rarity.color }}
+                        />
+                        <span className={`text-xs ${isChecked ? 'text-white font-semibold' : 'text-gray-400'}`}>
+                          {rarity.label}
+                        </span>
+                      </div>
                     );
                   })}
                 </div>
@@ -553,13 +593,14 @@ export default function AddItemView({
             </div>
           </div>
 
-          {/* Bottom Action Button in Vivid Red */}
-          <div className="pt-3 mt-4 border-t border-[#181818]">
+          {/* Bottom Action */}
+          <div className="pt-4 border-t border-[#141414]">
             <button
               type="button"
-              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-bold py-2 px-3 rounded-lg text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider"
+              onClick={onBack}
+              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-extrabold py-2.5 rounded-xl text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider"
             >
-              Ver {filteredList.length.toLocaleString('pt-BR')} resultados
+              Ver {filteredList.length} resultados
             </button>
           </div>
         </aside>
