@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --bg-dark: #090c10;
@@ -28,7 +32,7 @@
   --text-dim: #5c6b75;
   
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Orbitron', sans-serif;
+  --font-display: 'Rajdhani', 'Orbitron', sans-serif;
 }
 
 * {
@@ -61,19 +65,17 @@ body {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cs-gold);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* Typography & Utilities */
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: 0.5px;
 }
 
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: 12px;
 }
@@ -81,83 +83,63 @@ body {
 .glass-panel-hover {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .glass-panel-hover:hover {
   background: var(--bg-card-hover);
   border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* Badge & Glows */
-.team-badge-t {
-  background: linear-gradient(135deg, rgba(232, 119, 34, 0.2), rgba(232, 119, 34, 0.05));
-  border: 1px solid rgba(232, 119, 34, 0.4);
-  color: #ff9d42;
-}
-
-.team-badge-ct {
-  background: linear-gradient(135deg, rgba(61, 120, 245, 0.2), rgba(61, 120, 245, 0.05));
-  border: 1px solid rgba(61, 120, 245, 0.4);
-  color: #6da2ff;
-}
-
-/* Buttons */
+/* Custom Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #f0b232 0%, #d4931a 100%);
+  background: linear-gradient(135deg, var(--cs-gold) 0%, #c28b18 100%);
   color: #0b0e14;
   font-weight: 700;
   border: none;
-  padding: 0.65rem 1.25rem;
   border-radius: 8px;
-  cursor: pointer;
+  padding: 0.65rem 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-.btn-primary:hover {
-  filter: brightness(1.15);
-  box-shadow: 0 0 20px rgba(240, 178, 50, 0.4);
-  transform: translateY(-1px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(240, 178, 50, 0.3);
 }
 
-.btn-steam {
-  background: linear-gradient(135deg, #171a21 0%, #2a475e 100%);
-  color: #c7d5e0;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  font-weight: 600;
-  padding: 0.65rem 1.2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-.btn-steam:hover {
-  background: linear-gradient(135deg, #2a475e 0%, #3a6080 100%);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(240, 178, 50, 0.45);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-main);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  cursor: pointer;
+  padding: 0.65rem 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-steam {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-steam:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
 }
 
 /* Animations */
@@ -167,14 +149,5 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.25s ease-out forwards;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.pulse-glow {
-  animation: pulseGlow 2.5s infinite;
+  animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

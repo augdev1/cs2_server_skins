@@ -8,32 +8,27 @@ import {
   Radio, 
   Sparkles, 
   UserCheck, 
-  Music,
+  Shield,
+  Flame,
   Scissors
 } from 'lucide-react';
 
 const ICONS_MAP = {
-  rifles: Crosshair,
+  rifles: Flame,
   sniper_rifles: Target,
   pistols: Zap,
-  smg: Layers,
-  shotguns: Crosshair,
+  smg: Radio,
+  shotguns: Shield,
   machine_guns: Layers,
   knives: Scissors,
   gloves: Sparkles,
   agents: UserCheck,
-  music: Music
+  music: Disc
 };
 
 export default function CategoryTabs({ categories, selectedCategory, onSelectCategory }) {
   return (
-    <div style={{
-      display: 'flex',
-      gap: '0.5rem',
-      overflowX: 'auto',
-      paddingBottom: '0.5rem',
-      scrollbarWidth: 'none'
-    }}>
+    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
       {categories.map((cat) => {
         const isSelected = selectedCategory === cat.id;
         const IconComponent = ICONS_MAP[cat.id] || Crosshair;
@@ -44,32 +39,18 @@ export default function CategoryTabs({ categories, selectedCategory, onSelectCat
             key={cat.id}
             id={`tab-category-${cat.id}`}
             onClick={() => onSelectCategory(cat.id)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.65rem 1.15rem',
-              borderRadius: '10px',
-              border: isSelected 
-                ? (isSpecial ? '1px solid var(--cs-gold)' : '1px solid rgba(255, 255, 255, 0.3)')
-                : '1px solid var(--border-color)',
-              background: isSelected
-                ? (isSpecial 
-                    ? 'linear-gradient(135deg, rgba(240, 178, 50, 0.25), rgba(240, 178, 50, 0.08))' 
-                    : 'rgba(255, 255, 255, 0.12)')
-                : 'var(--bg-card)',
-              color: isSelected 
-                ? (isSpecial ? 'var(--cs-gold)' : '#fff')
-                : 'var(--text-muted)',
-              cursor: 'pointer',
-              fontWeight: isSelected ? 700 : 500,
-              fontSize: '0.85rem',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s',
-              boxShadow: isSelected && isSpecial ? '0 0 15px rgba(240, 178, 50, 0.2)' : 'none'
-            }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 cursor-pointer ${
+              isSelected
+                ? isSpecial
+                  ? 'bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-cs-gold border border-cs-gold shadow-gold font-bold scale-[1.02]'
+                  : 'bg-white/15 text-white border border-white/30 font-bold scale-[1.02]'
+                : 'bg-cs-card/80 text-gray-400 border border-white/10 hover:bg-cs-card hover:text-gray-200 hover:border-white/20'
+            }`}
           >
-            <IconComponent size={16} color={isSelected ? (isSpecial ? 'var(--cs-gold)' : '#fff') : 'currentColor'} />
+            <IconComponent 
+              size={17} 
+              className={isSelected ? (isSpecial ? 'text-cs-gold animate-pulse' : 'text-white') : 'text-gray-400'} 
+            />
             <span>{cat.name}</span>
           </button>
         );

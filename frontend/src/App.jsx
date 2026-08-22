@@ -10,7 +10,7 @@ import GlovesSelector from './components/GlovesSelector';
 import AgentSelector from './components/AgentSelector';
 import MusicSelector from './components/MusicSelector';
 import { authService, itemsService, playerService } from './services/api';
-import { Search, Sparkles, AlertCircle, Shield, Flame } from 'lucide-react';
+import { Search, Sparkles, AlertCircle, Shield, Flame, Crosshair } from 'lucide-react';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -26,6 +26,7 @@ export default function App() {
   const [gloves, setGloves] = useState([]);
   const [agents, setAgents] = useState([]);
   const [music, setMusic] = useState([]);
+  const [skinsMap, setSkinsMap] = useState({});
 
   // Player Loadout
   const [equipment, setEquipment] = useState({
@@ -68,17 +69,18 @@ export default function App() {
     initAuth();
   }, []);
 
-  // 2. Fetch Catalog Items
+  // 2. Fetch Catalog Items and Build Fast Skins Lookup Map
   useEffect(() => {
     const loadCatalog = async () => {
       try {
-        const [cats, weaps, knfs, glvs, agts, mus] = await Promise.all([
+        const [cats, weaps, knfs, glvs, agts, mus, allSkinsData] = await Promise.all([
           itemsService.getCategories(),
           itemsService.getWeapons(),
           itemsService.getKnives(),
           itemsService.getGloves(),
           itemsService.getAgents(),
-          itemsService.getMusic()
+          itemsService.getMusic(),
+          itemsService.getSkins()
         ]);
         setCategories(cats);
         setWeapons(weaps);
@@ -86,6 +88,14 @@ export default function App() {
         setGloves(glvs);
         setAgents(agts);
         setMusic(mus);
+
+        const map = {};
+        if (Array.isArray(allSkinsData)) {
+          allSkinsData.forEach((s) => {
+            map[`${s.weapon_defindex}_${s.paint}`] = s;
+          });
+        }
+        setSkinsMap(map);
       } catch (err) {
         console.error('Erro ao carregar catálogo de itens:', err);
       }
@@ -136,28 +146,17 @@ export default function App() {
   });
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-screen flex flex-col bg-cs-bg text-gray-100 selection:bg-cs-gold selection:text-black">
       {/* Toast Notification */}
       {toast && (
-        <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 200,
-          background: toast.type === 'error' ? 'rgba(235, 75, 75, 0.95)' : 'rgba(18, 24, 38, 0.95)',
-          border: toast.type === 'error' ? '1px solid #eb4b4b' : '1px solid var(--cs-gold)',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
-          borderRadius: '10px',
-          padding: '0.85rem 1.4rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.65rem',
-          color: '#fff',
-          fontWeight: 600,
-          fontSize: '0.9rem',
-          backdropFilter: 'blur(12px)'
-        }} className="animate-fade-in">
-          {toast.type === 'error' ? <AlertCircle size={18} /> : <Sparkles size={18} color="var(--cs-gold)" />}
+        <div 
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-xl font-semibold text-sm shadow-2xl backdrop-blur-xl animate-fade-in border ${
+            toast.type === 'error' 
+              ? 'bg-red-950/90 text-red-200 border-red-500/50 shadow-red-900/50' 
+              : 'bg-cs-surface/90 text-white border-cs-gold shadow-gold'
+          }`}
+        >
+          {toast.type === 'error' ? <AlertCircle size={18} /> : <Sparkles size={18} className="text-cs-gold" />}
           <span>{toast.message}</span>
         </div>
       )}
@@ -169,83 +168,48 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {/* Main Content */}
-      <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '2rem', width: '100%', flex: 1 }}>
-        {/* Hero & Team Selector Section */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-          marginBottom: '2rem',
-          padding: '1.75rem 2rem',
-          borderRadius: '16px',
-          background: team === 2 
-            ? 'linear-gradient(135deg, rgba(232, 119, 34, 0.12) 0%, rgba(12, 16, 26, 0.6) 100%)'
-            : 'linear-gradient(135deg, rgba(61, 120, 245, 0.12) 0%, rgba(12, 16, 26, 0.6) 100%)',
-          border: team === 2 ? '1px solid rgba(232, 119, 34, 0.3)' : '1px solid rgba(61, 120, 245, 0.3)',
-          boxShadow: '0 15px 35px rgba(0, 0, 0, 0.4)'
-        }}>
+      {/* Hero Banner / Quick Summary */}
+      <div className="relative border-b border-white/10 bg-gradient-to-b from-cs-surface/80 to-transparent py-8 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-              {team === 2 ? (
-                <span className="team-badge-t" style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Flame size={14} /> LADO TERRORISTA
-                </span>
-              ) : (
-                <span className="team-badge-ct" style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Shield size={14} /> LADO CONTRA-TERRORISTA
-                </span>
-              )}
+            <div className="flex items-center gap-2 text-cs-gold font-bold text-xs uppercase tracking-widest mb-1 font-display">
+              <Sparkles size={14} /> Servidor CS2 WeaponPaints
             </div>
-            <h1 className="font-display" style={{ fontSize: '1.75rem', fontWeight: 900, color: '#fff', letterSpacing: '0.5px' }}>
-              ESCOLHA SUAS SKINS DO CS2
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-display tracking-wide">
+              PERSONALIZADOR DE SKINS
             </h1>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Selecione o time, escolha armas ou facas e configure Wear/Float, StatTrak™, Nametag e Adesivos.
+            <p className="text-gray-400 text-sm max-w-xl mt-1">
+              Escolha suas skins, facas, luvas e agentes com suporte a Float/Wear, StatTrak™, Nametags e sincronização direta no servidor.
             </p>
           </div>
 
-          {/* Team Toggle */}
-          <TeamSelector team={team} onChangeTeam={setTeam} />
+          {/* Team Switcher Tabs */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+            <TeamSelector selectedTeam={team} onSelectTeam={setTeam} />
+          </div>
         </div>
+      </div>
 
-        {/* Categories Bar & Search */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.5rem'
-        }}>
+      {/* Main Content Area */}
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 flex-1">
+        {/* Categories Bar & Search Input */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
           <CategoryTabs
             categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
           />
 
-          {/* Search Box */}
-          {selectedCategory !== 'knives' && selectedCategory !== 'gloves' && selectedCategory !== 'agents' && selectedCategory !== 'music' && (
-            <div style={{ position: 'relative', minWidth: '260px' }}>
-              <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+          {/* Search bar for regular weapons */}
+          {!['knives', 'gloves', 'agents', 'music'].includes(selectedCategory) && (
+            <div className="relative min-w-[260px]">
+              <Search size={16} className="absolute left-3.5 top-3.5 text-gray-400" />
               <input
-                id="search-weapons"
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar arma..."
-                style={{
-                  width: '100%',
-                  background: 'var(--bg-input)',
-                  border: '1px solid var(--border-color)',
-                  padding: '0.65rem 1rem 0.65rem 2.3rem',
-                  borderRadius: '10px',
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  outline: 'none'
-                }}
+                placeholder="Buscar arma pelo nome..."
+                className="w-full bg-cs-card/80 border border-white/10 pl-10 pr-4 py-2.5 rounded-xl text-white text-sm outline-none focus:border-cs-gold focus:ring-1 focus:ring-cs-gold transition-all"
               />
             </div>
           )}
@@ -258,6 +222,7 @@ export default function App() {
             team={team}
             equippedKnifeModel={currentTeamEquipment.knife}
             equippedSkins={currentTeamEquipment.skins}
+            skinsMap={skinsMap}
             onKnifeChanged={(knifeModel) => {
               fetchEquipment();
               showToast(`Faca equipada para o time ${team === 2 ? 'TR' : 'CT'}!`);
@@ -280,53 +245,61 @@ export default function App() {
               fetchEquipment();
               showToast('Luvas equipadas com sucesso!');
             }}
+            onOpenSkinCustomizer={(gloveObj) => {
+              if (!user) {
+                setIsDevLoginOpen(true);
+                return;
+              }
+              setCustomizingWeapon(gloveObj);
+            }}
           />
         ) : selectedCategory === 'agents' ? (
           <AgentSelector
             agents={agents}
             team={team}
-            equippedAgent={currentTeamEquipment.agent}
-            onAgentChanged={(agentId) => {
+            equippedAgent={team === 2 ? currentTeamEquipment.agent_t : currentTeamEquipment.agent_ct}
+            onAgentChanged={() => {
               fetchEquipment();
-              showToast('Agente equipado!');
+              showToast('Agente equipado com sucesso!');
             }}
           />
         ) : selectedCategory === 'music' ? (
           <MusicSelector
-            musicKits={music}
+            musicList={music}
             team={team}
             equippedMusicId={currentTeamEquipment.music}
-            onMusicChanged={(musicId) => {
+            onMusicChanged={() => {
               fetchEquipment();
-              showToast('Music Kit equipado!');
+              showToast('Trilha sonora equipada com sucesso!');
             }}
           />
         ) : (
-          /* Standard Weapons Grid */
+          /* Weapons Grid */
           <div>
             {filteredWeapons.length === 0 ? (
-              <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-                Nenhuma arma encontrada para os filtros selecionados.
+              <div className="text-center py-16 text-gray-400 bg-cs-card/40 rounded-2xl border border-white/5">
+                Nenhuma arma encontrada para esta categoria ou filtro.
               </div>
             ) : (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                gap: '1.25rem'
-              }}>
-                {filteredWeapons.map((w) => {
-                  const equipped = currentTeamEquipment?.skins?.[String(w.defindex)];
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {filteredWeapons.map((weapon) => {
+                  const equippedSkin = currentTeamEquipment.skins?.[String(weapon.defindex)];
+                  const equippedSkinInfo = equippedSkin 
+                    ? skinsMap[`${weapon.defindex}_${equippedSkin.weapon_paint_id}`] 
+                    : null;
+
                   return (
                     <WeaponCard
-                      key={w.defindex}
-                      weapon={w}
-                      equippedSkin={equipped}
+                      key={weapon.defindex}
+                      weapon={weapon}
+                      equippedSkin={equippedSkin}
+                      equippedSkinInfo={equippedSkinInfo}
                       onCustomize={() => {
                         if (!user) {
                           setIsDevLoginOpen(true);
                           return;
                         }
-                        setCustomizingWeapon(w);
+                        setCustomizingWeapon(weapon);
                       }}
                     />
                   );
@@ -337,20 +310,18 @@ export default function App() {
         )}
       </main>
 
-      {/* Skin Customizer Modal */}
-      {customizingWeapon && (
-        <SkinCustomizerModal
-          weapon={customizingWeapon}
-          team={team}
-          currentSkin={currentTeamEquipment?.skins?.[String(customizingWeapon.defindex)]}
-          isOpen={!!customizingWeapon}
-          onClose={() => setCustomizingWeapon(null)}
-          onSkinEquipped={(payload) => {
-            fetchEquipment();
-            showToast('Skin atualizada no servidor!');
-          }}
-        />
-      )}
+      {/* Modal Customizer */}
+      <SkinCustomizerModal
+        weapon={customizingWeapon}
+        team={team}
+        currentSkin={customizingWeapon ? currentTeamEquipment.skins?.[String(customizingWeapon.defindex)] : null}
+        isOpen={!!customizingWeapon}
+        onClose={() => setCustomizingWeapon(null)}
+        onSkinEquipped={() => {
+          fetchEquipment();
+          showToast('Skin configurada e salva com sucesso!');
+        }}
+      />
 
       {/* Dev Login Modal */}
       <DevLoginModal
@@ -360,15 +331,11 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer style={{
-        borderTop: '1px solid var(--border-color)',
-        padding: '1.5rem 2rem',
-        textAlign: 'center',
-        color: 'var(--text-muted)',
-        fontSize: '0.8rem',
-        background: 'rgba(9, 12, 16, 0.9)'
-      }}>
-        <p>CS2 WeaponPaints Web &bull; Desenvolvido para servidores de Counter-Strike 2 com CounterStrikeSharp</p>
+      <footer className="border-t border-white/10 py-6 text-center text-xs text-gray-500 bg-cs-bg/90 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span>Counter-Strike 2 WeaponPaints Web System</span>
+          <span className="text-gray-400">Desenvolvido para a comunidade CS2</span>
+        </div>
       </footer>
     </div>
   );
