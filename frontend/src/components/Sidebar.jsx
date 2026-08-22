@@ -6,7 +6,6 @@ import {
   LogOut,
   HelpCircle
 } from 'lucide-react';
-import { authService } from '../services/api';
 
 export default function Sidebar({ 
   currentView, 
@@ -15,54 +14,37 @@ export default function Sidebar({
   onOpenDevLogin, 
   onLogout 
 }) {
-  const handleSteamLogin = () => {
-    window.location.href = authService.getSteamLoginUrl();
-  };
-
   return (
     <aside className="w-16 bg-[#000000] border-r border-[#141414] flex flex-col items-center py-4 justify-between select-none z-40 shrink-0 min-h-screen">
       {/* Top: CS PLAY Logo & Navigation Icons */}
-      <div className="flex flex-col items-center gap-4 w-full px-2">
-        {/* CS PLAY Logo */}
+      <div className="flex flex-col items-center gap-5 w-full px-2">
+        {/* CS PLAY Brand Badge (Visual only) */}
         <div 
-          onClick={() => {
-            if (user) {
-              onNavigate('inventory');
-            } else {
-              onNavigate('login');
-            }
-          }}
-          className="flex flex-col items-center cursor-pointer group mb-1"
+          className="flex flex-col items-center select-none"
           title="CS PLAY"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#0a0a0a] border border-[#222222] group-hover:border-[#ff2020] flex items-center justify-center shadow-[0_0_12px_rgba(255,32,32,0.3)] transition-all">
+          <div className="w-9 h-9 rounded-xl bg-[#0a0a0a] border border-[#222222] flex items-center justify-center shadow-[0_0_12px_rgba(255,32,32,0.3)]">
             <span className="font-black text-xs tracking-tighter text-[#ff2020] font-display">
               CS
             </span>
           </div>
-          <span className="text-[8px] font-black tracking-wider text-gray-300 mt-0.5 uppercase group-hover:text-[#ff2020] transition-colors font-display">
+          <span className="text-[8px] font-black tracking-wider text-gray-300 mt-0.5 uppercase font-display">
             PLAY
           </span>
         </div>
 
-        {/* Compact Navigation Menu (Inventário e Adicionar Item) */}
-        <nav className="flex flex-col items-center gap-1.5 w-full">
+        {/* Navigation Menu (Apenas Inventário e Adicionar Skin) */}
+        <nav className="flex flex-col items-center gap-2 w-full">
           {/* Meu Inventário */}
           <button
             type="button"
-            onClick={() => {
-              if (user) {
-                onNavigate('inventory');
-              } else {
-                onNavigate('login');
-              }
-            }}
+            onClick={() => onNavigate('inventory')}
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               currentView === 'inventory'
                 ? 'text-[#ff2020] bg-[#ff2020]/15 border border-[#ff2020]/40 shadow-[0_0_10px_rgba(255,32,32,0.3)]'
                 : 'text-gray-400 hover:text-white hover:bg-[#0e0e0e]'
             }`}
-            title={user ? "Meu Inventário" : "Faça login para ver o inventário"}
+            title="Meu Inventário"
           >
             <Box size={18} />
           </button>
@@ -70,32 +52,24 @@ export default function Sidebar({
           {/* Adicionar / Catálogo */}
           <button
             type="button"
-            onClick={() => {
-              if (user) {
-                onNavigate('add');
-              } else {
-                onNavigate('login');
-              }
-            }}
+            onClick={() => onNavigate('add')}
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               currentView === 'add'
                 ? 'text-[#ff2020] bg-[#ff2020]/15 border border-[#ff2020]/40 shadow-[0_0_10px_rgba(255,32,32,0.3)]'
                 : 'text-gray-400 hover:text-white hover:bg-[#0e0e0e]'
             }`}
-            title={user ? "Adicionar / Escolher Skin" : "Faça login para escolher skins"}
+            title="Adicionar Skin / Catálogo"
           >
             <Plus size={18} strokeWidth={2.5} />
           </button>
         </nav>
       </div>
 
-      {/* Bottom Actions: Compact, neatly aligned */}
-      <div className="flex flex-col items-center gap-2 w-full px-2">
-        {user ? (
-          /* User Logged In: Avatar & Controls */
-          <div className="flex flex-col items-center gap-1.5 w-full">
+      {/* Bottom Actions: User Avatar & Logout */}
+      <div className="flex flex-col items-center gap-2.5 w-full px-2">
+        {user && (
+          <div className="flex flex-col items-center gap-2 w-full">
             <div 
-              onClick={() => onNavigate('inventory')}
               className="relative cursor-pointer group"
               title={`${user.personaname} (${user.steamid})`}
             >
@@ -129,34 +103,6 @@ export default function Sidebar({
                 <LogOut size={14} />
               </button>
             </div>
-          </div>
-        ) : (
-          /* User NOT Logged In: Steam & Dev Login */
-          <div className="flex flex-col items-center gap-1.5 w-full">
-            {/* Steam Login */}
-            <button
-              type="button"
-              onClick={handleSteamLogin}
-              className="w-10 h-10 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] hover:border-[#ff2020] text-gray-300 hover:text-white hover:bg-[#ff2020]/20 hover:shadow-[0_0_12px_rgba(255,32,32,0.4)] transition-all cursor-pointer flex items-center justify-center group"
-              title="Entrar com a Steam"
-            >
-              <svg 
-                className="w-4 h-4 fill-current text-gray-300 group-hover:text-[#ff2020] transition-colors" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489l2.671-3.874a3.003 3.003 0 0 1-.51-.865l-3.66.732A8.006 8.006 0 0 1 6 12c0-3.314 2.686-6 6-6s6 2.686 6 6c0 3.186-2.484 5.792-5.617 5.98l1.668 2.451A10.003 10.003 0 0 0 22 12c0-5.523-4.477-10-10-10zm3.5 10a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm-7 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
-              </svg>
-            </button>
-
-            {/* Dev Login */}
-            <button
-              type="button"
-              onClick={onOpenDevLogin}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-amber-400 hover:bg-[#0e0e0e] transition-all cursor-pointer"
-              title="Dev Login"
-            >
-              <Terminal size={14} />
-            </button>
           </div>
         )}
 
