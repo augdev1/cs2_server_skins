@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { X, Key, UserCheck, Sparkles } from 'lucide-react';
+import { X, Key, UserCheck, Sparkles, Terminal, AlertTriangle } from 'lucide-react';
 import { authService } from '../services/api';
-
-const SAMPLE_STEAM_IDS = [
-  { id: '76561198232682580', name: 'Player Principal (Com Skins Salvas)' },
-  { id: '76561198405728315', name: 'Player 2 (Com Facas)' },
-  { id: '76561199004852794', name: 'Player 3 (M9 Bayonet)' }
-];
 
 export default function DevLoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [steamid, setSteamid] = useState('76561198232682580');
@@ -15,6 +9,9 @@ export default function DevLoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
+
+  const currentAuthType = localStorage.getItem('cs2_auth_type');
+  const isSteamActive = currentAuthType === 'steam';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,177 +32,84 @@ export default function DevLoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   };
 
-  const handleSelectSample = (sample) => {
-    setSteamid(sample.id);
-    setName(sample.name);
-  };
-
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.75)',
-      backdropFilter: 'blur(10px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 100,
-      padding: '1rem'
-    }}>
-      <div className="glass-panel animate-fade-in" style={{
-        maxWidth: '480px',
-        width: '100%',
-        padding: '2rem',
-        position: 'relative',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
-        border: '1px solid rgba(240, 178, 50, 0.3)'
-      }}>
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '1.25rem',
-            right: '1.25rem',
-            background: 'none',
-            border: 'none',
-            color: 'var(--text-muted)',
-            cursor: 'pointer'
-          }}
-        >
-          <X size={20} />
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <div style={{
-            background: 'rgba(240, 178, 50, 0.15)',
-            padding: '0.6rem',
-            borderRadius: '10px',
-            color: 'var(--cs-gold)'
-          }}>
-            <Key size={22} />
-          </div>
-          <div>
-            <h3 className="font-display" style={{ fontSize: '1.15rem', color: '#fff' }}>
-              MODO DESENVOLVIMENTO
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in select-none">
+      <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl w-full max-w-md p-6 shadow-[0_25px_60px_rgba(0,0,0,0.95)] relative">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#141414] pb-3 mb-4">
+          <div className="flex items-center gap-2">
+            <Terminal size={18} className="text-amber-400" />
+            <h3 className="text-sm font-extrabold text-white uppercase font-display tracking-wider">
+              Login Dev (SteamID Manual)
             </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Autenticação direta via SteamID sem necessidade de redirecionar para a Valve.
-            </p>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-all cursor-pointer"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        {error && (
-          <div style={{
-            background: 'rgba(235, 75, 75, 0.15)',
-            border: '1px solid rgba(235, 75, 75, 0.4)',
-            color: '#ff8585',
-            padding: '0.65rem 1rem',
-            borderRadius: '8px',
-            fontSize: '0.85rem',
-            marginBottom: '1rem'
-          }}>
-            {error}
+        {/* Steam Priority Notice */}
+        {isSteamActive && (
+          <div className="bg-amber-950/40 border border-amber-500/30 rounded-xl p-3 mb-4 flex items-start gap-2.5 text-xs text-amber-200">
+            <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+            <span>
+              <strong>Atenção:</strong> Você está conectado com a conta oficial da Steam. O login Dev é apenas secundário para testes.
+            </span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
-              SteamID64 do Jogador
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">
+              SteamID64
             </label>
             <input
-              id="input-steamid"
               type="text"
               value={steamid}
               onChange={(e) => setSteamid(e.target.value)}
-              placeholder="Ex: 76561198232682580"
-              style={{
-                width: '100%',
-                background: 'var(--bg-input)',
-                border: '1px solid var(--border-color)',
-                padding: '0.75rem 1rem',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '0.9rem',
-                outline: 'none',
-                fontFamily: 'monospace'
-              }}
+              placeholder="76561198..."
+              className="w-full bg-[#0e0e0e] border border-[#222222] px-3 py-2 rounded-xl text-xs text-white outline-none focus:border-[#ff2020] font-mono transition-all"
             />
           </div>
 
-          <div style={{ marginBottom: '1.25rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
-              Nome de Exibição
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">
+              Nome do Jogador
             </label>
             <input
-              id="input-player-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do jogador"
-              style={{
-                width: '100%',
-                background: 'var(--bg-input)',
-                border: '1px solid var(--border-color)',
-                padding: '0.75rem 1rem',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '0.9rem',
-                outline: 'none'
-              }}
+              placeholder="Ex: Jogador 1"
+              className="w-full bg-[#0e0e0e] border border-[#222222] px-3 py-2 rounded-xl text-xs text-white outline-none focus:border-[#ff2020] transition-all"
             />
           </div>
 
-          {/* Quick Select Accounts */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Sparkles size={13} color="var(--cs-gold)" />
-              <span>Contas de teste encontradas no seu MySQL:</span>
+          {error && (
+            <div className="text-xs text-red-400 bg-red-950/40 border border-red-500/30 p-2.5 rounded-xl">
+              {error}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              {SAMPLE_STEAM_IDS.map((sample) => (
-                <button
-                  key={sample.id}
-                  type="button"
-                  onClick={() => handleSelectSample(sample)}
-                  style={{
-                    background: steamid === sample.id ? 'rgba(240, 178, 50, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                    border: steamid === sample.id ? '1px solid rgba(240, 178, 50, 0.4)' : '1px solid var(--border-color)',
-                    padding: '0.5rem 0.75rem',
-                    borderRadius: '6px',
-                    color: steamid === sample.id ? 'var(--cs-gold)' : 'var(--text-main)',
-                    textAlign: 'left',
-                    fontSize: '0.75rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                >
-                  <span style={{ fontWeight: 600 }}>{sample.name}</span>
-                  <span style={{ fontFamily: 'monospace', opacity: 0.7 }}>{sample.id}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+          <div className="flex items-center gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="btn-secondary"
+              className="px-4 py-2 rounded-xl border border-[#222222] text-gray-400 hover:text-white hover:bg-white/5 text-xs font-semibold transition-all cursor-pointer"
             >
               Cancelar
             </button>
             <button
-              id="btn-confirm-dev-login"
               type="submit"
-              className="btn-primary"
               disabled={loading}
+              className="flex-1 bg-[#ff2020] hover:bg-[#e01515] text-white font-bold py-2 px-4 rounded-xl text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider"
             >
-              <UserCheck size={16} />
-              <span>{loading ? 'Entrando...' : 'Entrar na Conta'}</span>
+              {loading ? 'Entrando...' : 'Entrar como Dev'}
             </button>
           </div>
         </form>

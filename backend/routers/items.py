@@ -3,22 +3,16 @@ import json
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Query, HTTPException
 
-router = APIRouter(prefix="/api/items", tags=["Catálogo de Itens"])
+router = APIRouter(prefix="/items", tags=["Catálogo de Itens"])
+
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
 def load_json_file(filename: str) -> Any:
-    possible_paths = [
-        os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", filename),
-        os.path.join(os.getcwd(), "data", filename),
-        os.path.join(os.getcwd(), "backend", "data", filename),
-        os.path.join("/app", "data", filename),
-        os.path.join(os.path.dirname(__file__), "..", "data", filename)
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-    print(f" [AVISO] Arquivo {filename} não encontrado nos caminhos testados.")
-    return []
+    path = os.path.join(DATA_DIR, filename)
+    if not os.path.exists(path):
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # Carrega os dados em memória no startup
 weapons_data = load_json_file("weapons.json")
@@ -27,7 +21,6 @@ gloves_data = load_json_file("gloves.json")
 agents_data = load_json_file("agents.json")
 music_data = load_json_file("music.json")
 skins_data = load_json_file("skins.json")
-
 
 CATEGORIES = [
     {"id": "rifles", "name": "Rifles", "icon": "rifle"},
@@ -66,68 +59,57 @@ def get_skins(
     weapon_name: Optional[str] = Query(None, description="Filtrar por nome da arma (ex: weapon_ak47)"),
     search: Optional[str] = Query(None, description="Buscar por nome da skin (ex: Redline, Fade, Dragon Lore)")
 ):
-    """Retorna o catálogo de skins com ID da pintura (paint), imagens oficiais e nomes."""
+    """Retorna a lista de skins compatíveis com a busca."""
     results = skins_data
-    
+
     if defindex is not None:
-        results = [s for s in results if safe_int(s.get("weapon_defindex")) == defindex]
-        
+        target_def = safe_int(defindex)
+        results = [s for s in results if safe_int(s.get("weapon_defindex")) == target_def]
+
     if weapon_name:
         results = [s for s in results if s.get("weapon_name") == weapon_name]
-        
+
     if search:
-        s_lower = search.lower()
-        results = [s for s in results if s_lower in s.get("paint_name", "").lower()]
-        
+        s_lower = search.strip().lower()
+        results = [
+            s for s in results 
+            if s_lower in s.get("paint_name", "").lower() or s_lower in s.get("weapon_name", "").lower()
+        ]
+
     return results
 
-@router.get("/knives", summary="Listar modelos e skins de facas")
+@router.get("/knives", summary="Listar todas as facas do CS2")
 def get_knives():
-    """Retorna todos os modelos de facas do CS2 e suas respectivas skins compatíveis."""
-    knife_list = []
-    for k in knives_data:
-        defidx = safe_int(k["defindex"])
-        skins_for_knife = [s for s in skins_data if safe_int(s.get("weapon_defindex")) == defidx]
-        knife_list.append({
-            "defindex": defidx,
-            "name": k["name"],
-            "knife": k["knife"],
-            "image": k["image"],
-            "skins_count": len(skins_for_knife),
-            "skins": skins_for_knife
-        })
-    return knife_list
+    """Retorna a lista de todos os tipos e modelos de facas disponíveis."""
+    return knives_data
 
-
-@router.get("/gloves", summary="Listar modelos e skins de luvas")
+@router.get("/gloves", summary="Listar todas as luvas do CS2")
 def get_gloves():
-    """Retorna os modelos e skins de luvas disponíveis."""
+    """Retorna o catálogo completo de luvas oficiais."""
     return gloves_data
 
-@router.get("/agents", summary="Listar agentes")
-def get_agents(team: Optional[str] = Query(None, description="Filtrar por time: 'ct' ou 't'")):
-    """Retorna todos os agentes customizados disponíveis para TR e CT."""
-    if team and isinstance(agents_data, dict):
-        return agents_data.get(team.lower(), [])
+@router.get("/agents", summary="Listar todos os agentes de personangem")
+def get_agents(team: Optional[str] = Query(None, description="Filtrar por time ('t' ou 'ct')")):
+    """Retorna todos os modelos de agentes disponíveis."""
+    if team:
+        t_clean = team.strip().lower()
+        return [a for a in agents_data if a.get("team") == t_clean]
     return agents_data
 
-@router.get("/music", summary="Listar Music Kits")
+@router.get("/music", summary="Listar todas as trilhas sonoras (Music Kits)")
 def get_music():
-    """Retorna todas as trilhas sonoras / Music Kits do CS2."""
+    """Retorna todas as trilhas sonoras oficiais do CS2."""
     return music_data
 
-@router.get("/search", summary="Busca global de itens")
-def search_items(q: str = Query(..., min_length=2, description="Termo de busca")):
-    """Busca em armas, skins, facas e agentes pelo nome ou pintura."""
-    term = q.lower()
-    
-    matched_weapons = [w for w in weapons_data if term in w.get("name", "").lower() or term in w.get("weapon_name", "").lower()]
-    matched_knives = [k for k in knives_data if term in k.get("name", "").lower()]
-    matched_skins = [s for s in skins_data if term in s.get("paint_name", "").lower()][:50]
-    
-    return {
-        "query": q,
-        "weapons": matched_weapons,
-        "knives": matched_knives,
-        "skins": matched_skins
-    }
+@router.get("/rarities", summary="Listar todas as raridades")
+def get_rarities():
+    """Retorna as cores e nomes de raridades das skins."""
+    return [
+        {"id": "covert", "name": "★ Covert (Oculto)", "color": "#eb4b4b"},
+        {"id": "classified", "name": "Classified (Confidencial)", "color": "#d32ce6"},
+        {"id": "restricted", "name": "Restricted (Restrito)", "color": "#8847ff"},
+        {"id": "milspec", "name": "Mil-Spec (Grau Militar)", "color": "#4b69ff"},
+        {"id": "industrial", "name": "Industrial (Grau Industrial)", "color": "#5e98d9"},
+        {"id": "consumer", "name": "Consumer (Consumidor)", "color": "#b0c3d9"},
+        {"id": "contraband", "name": "Contraband (Contrabando)", "color": "#ffd700"}
+    ]

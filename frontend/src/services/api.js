@@ -1,9 +1,16 @@
 import axios from 'axios';
+import localWeapons from '../data/weapons.json';
+import localKnives from '../data/knives.json';
+import localGloves from '../data/gloves.json';
+import localAgents from '../data/agents.json';
+import localMusic from '../data/music.json';
+import localSkins from '../data/skins.json';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://cs2-server-skins.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,6 +36,7 @@ export const authService = {
     if (res.data?.access_token) {
       localStorage.setItem('cs2_token', res.data.access_token);
       localStorage.setItem('cs2_user', JSON.stringify(res.data.user));
+      localStorage.setItem('cs2_auth_type', 'dev');
     }
     return res.data;
   },
@@ -41,6 +49,7 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('cs2_token');
     localStorage.removeItem('cs2_user');
+    localStorage.removeItem('cs2_auth_type');
   },
 
   getStoredUser: () => {
@@ -56,51 +65,107 @@ export const authService = {
   
   setToken: (token, user) => {
     localStorage.setItem('cs2_token', token);
+    localStorage.setItem('cs2_auth_type', 'steam');
     if (user) localStorage.setItem('cs2_user', JSON.stringify(user));
   }
 };
 
 export const itemsService = {
   getCategories: async () => {
-    const res = await api.get('/items/categories');
-    return res.data;
+    try {
+      const res = await api.get('/items/categories');
+      return res.data;
+    } catch {
+      return [
+        { id: "rifles", name: "Rifles" },
+        { id: "sniper_rifles", name: "Rifles de Precisão" },
+        { id: "pistols", name: "Pistolas" },
+        { id: "smg", name: "Submetralhadoras" },
+        { id: "shotguns", name: "Espingardas" },
+        { id: "machine_guns", name: "Metralhadoras" },
+        { id: "knives", name: "Facas" },
+        { id: "gloves", name: "Luvas" },
+        { id: "agents", name: "Agentes" },
+        { id: "music", name: "Kit de música" }
+      ];
+    }
   },
 
   getWeapons: async (category = null) => {
-    const params = category ? { category } : {};
-    const res = await api.get('/items/weapons', { params });
-    return res.data;
+    try {
+      const params = category ? { category } : {};
+      const res = await api.get('/items/weapons', { params });
+      return res.data;
+    } catch {
+      if (category) {
+        return localWeapons.filter(w => w.category === category);
+      }
+      return localWeapons;
+    }
   },
 
   getSkins: async (filters = {}) => {
-    const res = await api.get('/items/skins', { params: filters });
-    return res.data;
+    try {
+      const res = await api.get('/items/skins', { params: filters });
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data;
+      }
+      return localSkins;
+    } catch {
+      return localSkins;
+    }
   },
 
   getKnives: async () => {
-    const res = await api.get('/items/knives');
-    return res.data;
+    try {
+      const res = await api.get('/items/knives');
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data;
+      }
+      return localKnives;
+    } catch {
+      return localKnives;
+    }
   },
 
   getGloves: async () => {
-    const res = await api.get('/items/gloves');
-    return res.data;
+    try {
+      const res = await api.get('/items/gloves');
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data;
+      }
+      return localGloves;
+    } catch {
+      return localGloves;
+    }
   },
 
   getAgents: async (team = null) => {
-    const params = team ? { team } : {};
-    const res = await api.get('/items/agents', { params });
-    return res.data;
+    try {
+      const params = team ? { team } : {};
+      const res = await api.get('/items/agents', { params });
+      return res.data;
+    } catch {
+      return localAgents;
+    }
   },
 
   getMusic: async () => {
-    const res = await api.get('/items/music');
-    return res.data;
+    try {
+      const res = await api.get('/items/music');
+      return res.data;
+    } catch {
+      return localMusic;
+    }
   },
 
   getRarities: async () => {
-    const res = await api.get('/items/rarities');
-    return res.data;
+    try {
+      const res = await api.get('/items/rarities');
+      return res.data;
+    } catch {
+      return [];
+    }
   }
 };
 
