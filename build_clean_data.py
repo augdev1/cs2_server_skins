@@ -8,7 +8,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 def fetch_json(url):
     print(f"Baixando: {url}...")
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req, timeout=25) as resp:
+    with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode('utf-8'))
 
 WEAPON_MAP = {
@@ -60,28 +60,31 @@ WEAPON_MAP = {
     "weapon_negev": {"defindex": 28, "name": "Negev", "category": "machine_guns", "team": "any", "api_name": "Negev", "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_negev.png"},
 }
 
-KNIVES_MAP = {
-    "weapon_bayonet": {"defindex": 500, "name": "★ Bayonet", "aliases": ["Bayonet", "★ Bayonet"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_bayonet.png"},
-    "weapon_knife_css": {"defindex": 503, "name": "★ Classic Knife", "aliases": ["Classic Knife", "★ Classic Knife"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_css.png"},
-    "weapon_knife_flip": {"defindex": 505, "name": "★ Flip Knife", "aliases": ["Flip Knife", "★ Flip Knife"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_flip.png"},
-    "weapon_knife_gut": {"defindex": 506, "name": "★ Gut Knife", "aliases": ["Gut Knife", "★ Gut Knife"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gut.png"},
-    "weapon_knife_karambit": {"defindex": 507, "name": "★ Karambit", "aliases": ["Karambit", "★ Karambit"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png"},
-    "weapon_knife_m9_bayonet": {"defindex": 508, "name": "★ M9 Bayonet", "aliases": ["M9 Bayonet", "★ M9 Bayonet"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_m9_bayonet.png"},
-    "weapon_knife_tactical": {"defindex": 509, "name": "★ Huntsman Knife", "aliases": ["Huntsman Knife", "★ Huntsman Knife", "Huntsman"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_tactical.png"},
-    "weapon_knife_falchion": {"defindex": 512, "name": "★ Falchion Knife", "aliases": ["Falchion Knife", "★ Falchion Knife", "Falchion"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_falchion.png"},
-    "weapon_knife_survival_bowie": {"defindex": 514, "name": "★ Bowie Knife", "aliases": ["Bowie Knife", "★ Bowie Knife", "Bowie"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_survival_bowie.png"},
-    "weapon_knife_butterfly": {"defindex": 515, "name": "★ Butterfly Knife", "aliases": ["Butterfly Knife", "★ Butterfly Knife", "Butterfly"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_butterfly.png"},
-    "weapon_knife_push": {"defindex": 516, "name": "★ Shadow Daggers", "aliases": ["Shadow Daggers", "★ Shadow Daggers"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_push.png"},
-    "weapon_knife_cord": {"defindex": 517, "name": "★ Paracord Knife", "aliases": ["Paracord Knife", "★ Paracord Knife", "Paracord"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_cord.png"},
-    "weapon_knife_canis": {"defindex": 518, "name": "★ Survival Knife", "aliases": ["Survival Knife", "★ Survival Knife", "Survival"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_canis.png"},
-    "weapon_knife_ursus": {"defindex": 519, "name": "★ Ursus Knife", "aliases": ["Ursus Knife", "★ Ursus Knife", "Ursus"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_ursus.png"},
-    "weapon_knife_gypsy_jackknife": {"defindex": 520, "name": "★ Navaja Knife", "aliases": ["Navaja Knife", "★ Navaja Knife", "Navaja"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gypsy_jackknife.png"},
-    "weapon_knife_outdoor": {"defindex": 521, "name": "★ Nomad Knife", "aliases": ["Nomad Knife", "★ Nomad Knife", "Nomad"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_outdoor.png"},
-    "weapon_knife_stiletto": {"defindex": 522, "name": "★ Stiletto Knife", "aliases": ["Stiletto Knife", "★ Stiletto Knife", "Stiletto"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_stiletto.png"},
-    "weapon_knife_widowmaker": {"defindex": 523, "name": "★ Talon Knife", "aliases": ["Talon Knife", "★ Talon Knife", "Talon"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_widowmaker.png"},
-    "weapon_knife_skeleton": {"defindex": 525, "name": "★ Skeleton Knife", "aliases": ["Skeleton Knife", "★ Skeleton Knife", "Skeleton"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_skeleton.png"},
-    "weapon_knife_kukri": {"defindex": 526, "name": "★ Kukri Knife", "aliases": ["Kukri Knife", "★ Kukri Knife", "Kukri"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_kukri.png"},
-}
+KNIVES_LIST = [
+    {"defindex": 508, "name": "★ M9 Bayonet", "knife": "weapon_knife_m9_bayonet", "match": ["M9 Bayonet", "weapon_knife_m9_bayonet"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_m9_bayonet.png"},
+    {"defindex": 500, "name": "★ Bayonet", "knife": "weapon_bayonet", "match": ["Bayonet", "weapon_bayonet"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_bayonet.png"},
+    {"defindex": 503, "name": "★ Classic Knife", "knife": "weapon_knife_css", "match": ["Classic Knife", "weapon_knife_css"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_css.png"},
+    {"defindex": 505, "name": "★ Flip Knife", "knife": "weapon_knife_flip", "match": ["Flip Knife", "weapon_knife_flip"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_flip.png"},
+    {"defindex": 506, "name": "★ Gut Knife", "knife": "weapon_knife_gut", "match": ["Gut Knife", "weapon_knife_gut"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gut.png"},
+    {"defindex": 507, "name": "★ Karambit", "knife": "weapon_knife_karambit", "match": ["Karambit", "weapon_knife_karambit"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png"},
+    {"defindex": 509, "name": "★ Huntsman Knife", "knife": "weapon_knife_tactical", "match": ["Huntsman Knife", "Huntsman", "weapon_knife_tactical"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_tactical.png"},
+    {"defindex": 512, "name": "★ Falchion Knife", "knife": "weapon_knife_falchion", "match": ["Falchion Knife", "Falchion", "weapon_knife_falchion"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_falchion.png"},
+    {"defindex": 514, "name": "★ Bowie Knife", "knife": "weapon_knife_survival_bowie", "match": ["Bowie Knife", "Bowie", "weapon_knife_survival_bowie"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_survival_bowie.png"},
+    {"defindex": 515, "name": "★ Butterfly Knife", "knife": "weapon_knife_butterfly", "match": ["Butterfly Knife", "Butterfly", "weapon_knife_butterfly"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_butterfly.png"},
+    {"defindex": 516, "name": "★ Shadow Daggers", "knife": "weapon_knife_push", "match": ["Shadow Daggers", "weapon_knife_push"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_push.png"},
+    {"defindex": 517, "name": "★ Paracord Knife", "knife": "weapon_knife_cord", "match": ["Paracord Knife", "Paracord", "weapon_knife_cord"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_cord.png"},
+    {"defindex": 518, "name": "★ Survival Knife", "knife": "weapon_knife_canis", "match": ["Survival Knife", "weapon_knife_canis"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_canis.png"},
+    {"defindex": 519, "name": "★ Ursus Knife", "knife": "weapon_knife_ursus", "match": ["Ursus Knife", "Ursus", "weapon_knife_ursus"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_ursus.png"},
+    {"defindex": 520, "name": "★ Navaja Knife", "knife": "weapon_knife_gypsy_jackknife", "match": ["Navaja Knife", "Navaja", "weapon_knife_gypsy_jackknife"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gypsy_jackknife.png"},
+    {"defindex": 521, "name": "★ Nomad Knife", "knife": "weapon_knife_outdoor", "match": ["Nomad Knife", "Nomad", "weapon_knife_outdoor"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_outdoor.png"},
+    {"defindex": 522, "name": "★ Stiletto Knife", "knife": "weapon_knife_stiletto", "match": ["Stiletto Knife", "Stiletto", "weapon_knife_stiletto"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_stiletto.png"},
+    {"defindex": 523, "name": "★ Talon Knife", "knife": "weapon_knife_widowmaker", "match": ["Talon Knife", "Talon", "weapon_knife_widowmaker"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_widowmaker.png"},
+    {"defindex": 525, "name": "★ Skeleton Knife", "knife": "weapon_knife_skeleton", "match": ["Skeleton Knife", "Skeleton", "weapon_knife_skeleton"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_skeleton.png"},
+    {"defindex": 526, "name": "★ Kukri Knife", "knife": "weapon_knife_kukri", "match": ["Kukri Knife", "Kukri", "weapon_knife_kukri"], "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_kukri.png"}
+]
+
+# Sort by match length descending so "M9 Bayonet" matches before "Bayonet"
+KNIVES_LIST.sort(key=lambda x: max(len(m) for m in x["match"]), reverse=True)
 
 GLOVES_MAP = {
     "Bloodhound Gloves": {"defindex": 5027, "name": "★ Bloodhound Gloves"},
@@ -102,7 +105,7 @@ def main():
     
     print(f"API retornou {len(raw_skins)} skins, {len(raw_agents)} agentes, {len(raw_music)} music kits.")
 
-    # 2. Build weapons.json
+    # 1. Build weapons.json
     weapons_list = []
     for wname, info in WEAPON_MAP.items():
         weapons_list.append({
@@ -114,17 +117,17 @@ def main():
             "image": info["image"]
         })
         
-    # 3. Build knives.json
+    # 2. Build knives.json
     knives_list = []
-    for kname, info in KNIVES_MAP.items():
+    for k in KNIVES_LIST:
         knives_list.append({
-            "defindex": info["defindex"],
-            "name": info["name"],
-            "knife": kname,
-            "image": info["image"]
+            "defindex": k["defindex"],
+            "name": k["name"],
+            "knife": k["knife"],
+            "image": k["image"]
         })
 
-    # 4. Map API skins into our unified skins.json format
+    # 3. Map API skins into our unified skins.json format
     unified_skins = []
     
     # Add default (paint=0) skins
@@ -165,7 +168,7 @@ def main():
         if not paint_idx or paint_idx == "None" or not img:
             continue
             
-        # Match regular weapon
+        # 1. Match regular weapon
         matched_wkey = next((k for k, v in WEAPON_MAP.items() if v["api_name"] == w_name or v["name"] == w_name or k == w_id), None)
         if matched_wkey:
             winfo = WEAPON_MAP[matched_wkey]
@@ -180,27 +183,31 @@ def main():
             })
             continue
 
-        # Match knife
-        matched_kkey = None
-        for kname, kinfo in KNIVES_MAP.items():
-            if w_id == kname or w_name in kinfo["aliases"] or any(alias.lower() in name.lower() for alias in kinfo["aliases"]):
-                matched_kkey = kname
-                break
-                
-        if matched_kkey and (cat_name == "Knives" or "★" in name or "Knife" in name or "Bayonet" in name or "Karambit" in name or "Daggers" in name):
-            kinfo = KNIVES_MAP[matched_kkey]
-            unified_skins.append({
-                "weapon_defindex": kinfo["defindex"],
-                "weapon_name": matched_kkey,
-                "paint": paint_idx,
-                "paint_name": name,
-                "image": img,
-                "rarity_name": "★ Covert",
-                "rarity_color": "#ffd700"
-            })
-            continue
+        # 2. Match exact knife
+        is_knife_item = cat_name == "Knives" or "★" in name or "Knife" in name or "Bayonet" in name or "Karambit" in name or "Daggers" in name
+        if is_knife_item:
+            for k in KNIVES_LIST:
+                matched = False
+                if w_id == k["knife"]:
+                    matched = True
+                elif w_name and any(m.lower() == w_name.lower() or f"★ {m.lower()}" == w_name.lower() for m in k["match"]):
+                    matched = True
+                elif any(m.lower() in name.lower() for m in k["match"]):
+                    matched = True
+                    
+                if matched:
+                    unified_skins.append({
+                        "weapon_defindex": k["defindex"],
+                        "weapon_name": k["knife"],
+                        "paint": paint_idx,
+                        "paint_name": name,
+                        "image": img,
+                        "rarity_name": "★ Covert",
+                        "rarity_color": "#ffd700"
+                    })
+                    break
 
-    # 5. Build gloves.json and gloves skins
+    # 4. Build gloves.json and gloves skins
     gloves_list = []
     for item in raw_skins:
         cat = item.get("category") or {}
@@ -225,7 +232,7 @@ def main():
                 "image": img
             })
 
-    # 6. Build agents.json
+    # 5. Build agents.json
     agents_list = []
     for item in raw_agents:
         team_str = "t" if "terrorist" in item.get("team", {}).get("name", "").lower() else "ct"
@@ -237,7 +244,7 @@ def main():
             "image": item.get("image")
         })
 
-    # 7. Build music.json
+    # 6. Build music.json
     music_list = []
     for idx, item in enumerate(raw_music):
         music_list.append({
@@ -264,7 +271,7 @@ def main():
         with open(f"{out_dir}/skins.json", "w", encoding="utf-8") as f:
             json.dump(unified_skins, f, indent=2, ensure_ascii=False)
 
-    print("Todos os arquivos JSON em backend/data/ e data/ atualizados com sucesso!")
+    print("Todos os arquivos JSON atualizados com sucesso!")
 
 if __name__ == "__main__":
     main()
