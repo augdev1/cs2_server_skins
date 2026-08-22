@@ -11,7 +11,7 @@ import { Sparkles, AlertCircle } from 'lucide-react';
 export default function App() {
   const [user, setUser] = useState(null);
   const [isDevLoginOpen, setIsDevLoginOpen] = useState(false);
-  const [currentView, setCurrentView] = useState('login'); // 'login' | 'inventory' | 'add'
+  const [currentView, setCurrentView] = useState('inventory'); // 'inventory' | 'add'
   const [team, setTeam] = useState(2); // 2 = TR, 3 = CT
 
   // Data states
@@ -61,10 +61,9 @@ export default function App() {
         } catch {
           authService.logout();
           setUser(null);
-          setCurrentView('login');
         }
       } else {
-        setCurrentView('login');
+        setUser(null);
       }
     };
     initAuth();
@@ -122,7 +121,7 @@ export default function App() {
     }
   }, [user]);
 
-  // Logout Handler: Immediately clears session and redirects to login view
+  // Logout Handler: Clears session and returns to full-screen login
   const handleLogout = () => {
     authService.logout();
     setUser(null);
@@ -130,7 +129,6 @@ export default function App() {
       t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
       ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
     });
-    setCurrentView('login');
     showToast('Sessão encerrada com sucesso.');
   };
 
@@ -144,7 +142,6 @@ export default function App() {
   // Quando o usuário seleciona uma skin na aba "Criar Item"
   const handleSelectSkinFromAddView = (item) => {
     if (!user) {
-      setCurrentView('login');
       setIsDevLoginOpen(true);
       return;
     }
@@ -181,66 +178,59 @@ export default function App() {
         </div>
       )}
 
-      {/* Left Vertical Sidebar in True Black & Vivid Red */}
-      <Sidebar
-        currentView={currentView}
-        onNavigate={(view) => {
-          if (!user && (view === 'inventory' || view === 'add')) {
-            setCurrentView('login');
-            showToast('Por favor, faça login para acessar o inventário.', 'error');
-            return;
-          }
-          setCurrentView(view);
-        }}
-        user={user}
-        onOpenDevLogin={() => setIsDevLoginOpen(true)}
-        onLogout={handleLogout}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#000000]">
-        {!user || currentView === 'login' ? (
-          /* View 0: Página Inicial / Login */
+      {/* Se o usuário NÃO estiver logado: Exibe a tela inicial de login em tela cheia */}
+      {!user ? (
+        <div className="flex-1 flex flex-col min-w-0">
           <LoginView onOpenDevLogin={() => setIsDevLoginOpen(true)} />
-        ) : currentView === 'add' ? (
-          /* View 2: "Criar Item / Passo 1 de 2" */
-          <AddItemView
-            skins={allSkins}
-            weapons={weapons}
-            knives={knives}
-            gloves={gloves}
-            agents={agents}
-            music={music}
-            onBack={() => setCurrentView('inventory')}
-            onSelectSkin={handleSelectSkinFromAddView}
+        </div>
+      ) : (
+        /* Se o usuário ESTIVER logado: Exibe a sidebar do usuário com Inventário e Catálogo */
+        <>
+          <Sidebar
+            currentView={currentView}
+            onNavigate={(view) => setCurrentView(view)}
+            user={user}
+            onOpenDevLogin={() => setIsDevLoginOpen(true)}
+            onLogout={handleLogout}
           />
-        ) : (
-          /* View 1: "Meu Inventário" */
-          <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6 bg-[#000000]">
-            <InventoryView
-              weapons={weapons}
-              knives={knives}
-              gloves={gloves}
-              agents={agents}
-              music={music}
-              team={team}
-              setTeam={setTeam}
-              equipment={equipment}
-              skinsMap={skinsMap}
-              onOpenAdd={() => setCurrentView('add')}
-              onCustomizeWeapon={(weaponObj) => {
-                if (!user) {
-                  setCurrentView('login');
-                  setIsDevLoginOpen(true);
-                  return;
-                }
-                setInitialCustomizerPaint(null);
-                setCustomizingWeapon(weaponObj);
-              }}
-            />
+
+          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#000000]">
+            {currentView === 'add' ? (
+              /* View 2: "Criar Item / Passo 1 de 2" */
+              <AddItemView
+                skins={allSkins}
+                weapons={weapons}
+                knives={knives}
+                gloves={gloves}
+                agents={agents}
+                music={music}
+                onBack={() => setCurrentView('inventory')}
+                onSelectSkin={handleSelectSkinFromAddView}
+              />
+            ) : (
+              /* View 1: "Meu Inventário" */
+              <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6 bg-[#000000]">
+                <InventoryView
+                  weapons={weapons}
+                  knives={knives}
+                  gloves={gloves}
+                  agents={agents}
+                  music={music}
+                  team={team}
+                  setTeam={setTeam}
+                  equipment={equipment}
+                  skinsMap={skinsMap}
+                  onOpenAdd={() => setCurrentView('add')}
+                  onCustomizeWeapon={(weaponObj) => {
+                    setInitialCustomizerPaint(null);
+                    setCustomizingWeapon(weaponObj);
+                  }}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Modal Customizer */}
       <SkinCustomizerModal
