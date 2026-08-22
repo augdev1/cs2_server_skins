@@ -3,14 +3,7 @@ import {
   Plus, 
   Search, 
   Info, 
-  X, 
-  Eye, 
-  Trash2, 
-  Sparkles,
-  SlidersHorizontal,
-  Flame,
-  Shield,
-  Palette
+  X
 } from 'lucide-react';
 import TeamSelector from './TeamSelector';
 
@@ -106,15 +99,15 @@ export default function InventoryView({
   });
 
   return (
-    <div className="space-y-5">
-      {/* Top Action Bar (Matching Image 1) */}
-      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[#111218] p-4 rounded-2xl border border-[#1d1f2b]">
+    <div className="space-y-4">
+      {/* Top Action Bar */}
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[#101014] p-3.5 rounded-xl border border-[#1e1e24] shadow-sm">
         {/* Left Side: + Adicionar Item button & Toggles */}
         <div className="flex items-center flex-wrap gap-3">
           <button
             type="button"
             onClick={onOpenAdd}
-            className="flex items-center gap-2 bg-[#ff5500] hover:bg-[#e64d00] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-[0_0_20px_rgba(255,85,0,0.35)] transition-all cursor-pointer hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 bg-[#ff5500] hover:bg-[#e64d00] text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm transition-all cursor-pointer hover:scale-[1.02] active:scale-95"
           >
             <Plus size={16} strokeWidth={3} />
             <span>Adicionar Item</span>
@@ -123,11 +116,11 @@ export default function InventoryView({
           {/* 3D Inspect Toggle */}
           <div 
             onClick={() => setInspect3d(!inspect3d)}
-            className="flex items-center gap-2 bg-[#171822] border border-[#262838] px-3 py-2 rounded-xl text-xs cursor-pointer hover:border-white/20 transition-all select-none"
+            className="flex items-center gap-2 bg-[#141418] border border-[#22222a] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-600 transition-all select-none"
           >
             <span className="text-gray-300 font-semibold">Inspecionar 3D</span>
-            <span className="bg-[#ff5500] text-white text-[8px] font-extrabold px-1 rounded uppercase">NOVO</span>
-            <div className={`w-8 h-4 rounded-full transition-colors relative ${inspect3d ? 'bg-[#ff5500]' : 'bg-gray-700'}`}>
+            <span className="bg-[#ff5500] text-white text-[8px] font-black px-1 rounded uppercase">NOVO</span>
+            <div className={`w-8 h-4 rounded-full transition-colors relative ${inspect3d ? 'bg-[#ff5500]' : 'bg-[#2a2a34]'}`}>
               <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${inspect3d ? 'right-0.5' : 'left-0.5'}`} />
             </div>
           </div>
@@ -135,10 +128,10 @@ export default function InventoryView({
           {/* Fast Add Toggle */}
           <div 
             onClick={() => setFastAdd(!fastAdd)}
-            className="flex items-center gap-2 bg-[#171822] border border-[#262838] px-3 py-2 rounded-xl text-xs cursor-pointer hover:border-white/20 transition-all select-none"
+            className="flex items-center gap-2 bg-[#141418] border border-[#22222a] px-3 py-2 rounded-lg text-xs cursor-pointer hover:border-gray-600 transition-all select-none"
           >
             <span className="text-gray-300 font-semibold">Adição rápida</span>
-            <div className={`w-8 h-4 rounded-full transition-colors relative ${fastAdd ? 'bg-[#ff5500]' : 'bg-gray-700'}`}>
+            <div className={`w-8 h-4 rounded-full transition-colors relative ${fastAdd ? 'bg-[#ff5500]' : 'bg-[#2a2a34]'}`}>
               <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${fastAdd ? 'right-0.5' : 'left-0.5'}`} />
             </div>
           </div>
@@ -149,43 +142,31 @@ export default function InventoryView({
           <TeamSelector selectedTeam={team} onSelectTeam={setTeam} />
 
           <div className="relative min-w-[240px] flex-1 sm:flex-initial">
-            <Search size={15} className="absolute left-3.5 top-3 text-gray-500" />
+            <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por nome ou modelo..."
-              className="w-full bg-[#171822] border border-[#262838] pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff5500] transition-all"
+              placeholder="Buscar no inventário..."
+              className="w-full bg-[#141418] border border-[#22222a] pl-9 pr-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff5500] transition-all"
             />
           </div>
         </div>
       </div>
 
-      {/* Secondary Action Toolbar */}
-      <div className="flex items-center justify-between flex-wrap gap-3 text-xs text-gray-400">
-        <div className="flex items-center gap-2">
-          <button type="button" className="px-3 py-1.5 rounded-lg bg-[#14151e] border border-[#222434] hover:text-white hover:border-white/20 transition-all">
-            Selecionar Itens
-          </button>
-          <button type="button" className="px-3 py-1.5 rounded-lg bg-[#14151e] border border-[#222434] hover:text-white hover:border-white/20 transition-all">
-            Criar Coleção
-          </button>
-          <button type="button" className="px-3 py-1.5 rounded-lg bg-[#14151e] border border-[#222434] hover:text-white hover:border-white/20 transition-all">
-            Visualizar no Servidor
-          </button>
-          <button type="button" className="px-3 py-1.5 rounded-lg bg-[#14151e] border border-[#222434] hover:text-red-400 hover:border-red-500/30 transition-all flex items-center gap-1">
-            <Trash2 size={13} /> Limpar
-          </button>
-        </div>
-
-        <div className="text-gray-500 font-medium">
-          <strong className="text-gray-300 font-bold">{filteredItems.length} itens</strong> &bull; ordenado por Mais Novos
-        </div>
+      {/* Item Counter Bar (without unused buttons) */}
+      <div className="flex items-center justify-between text-xs text-gray-400 px-1">
+        <span className="font-semibold">
+          Inventário <span className="text-white font-bold">{team === 2 ? 'Terrorista (TR)' : 'Contra-Terrorista (CT)'}</span>
+        </span>
+        <span className="text-gray-400 font-medium">
+          <strong className="text-white font-bold">{filteredItems.length} itens</strong> equipados
+        </span>
       </div>
 
       {/* Chat Command Notification Banner */}
       {showNotice && (
-        <div className="bg-[#14151e] border border-[#222434] px-4 py-2.5 rounded-xl flex items-center justify-between text-xs text-gray-300">
+        <div className="bg-[#101014] border border-[#1e1e24] px-4 py-2.5 rounded-lg flex items-center justify-between text-xs text-gray-300">
           <div className="flex items-center gap-2">
             <Info size={15} className="text-[#ff5500] shrink-0" />
             <span>
@@ -202,31 +183,31 @@ export default function InventoryView({
         </div>
       )}
 
-      {/* Main Inventory Grid (6 Columns like in Image 1) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5">
+      {/* Main Inventory Grid (6 Columns) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         {filteredItems.map((item) => {
           return (
             <div
               key={item.id}
               onClick={() => onCustomizeWeapon(item.itemObj)}
-              className="group bg-[#121217] hover:bg-[#181920] border border-[#1e202b] hover:border-[#ff5500]/60 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
+              className="group bg-[#101014] hover:bg-[#15151a] border border-[#1e1e26] hover:border-[#ff5500]/60 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
               style={{
-                borderBottomColor: item.rarityColor !== 'transparent' ? item.rarityColor : '#222434',
+                borderBottomColor: item.rarityColor !== 'transparent' ? item.rarityColor : '#22222a',
                 borderBottomWidth: '2.5px'
               }}
             >
               {/* Top Team Indicator Dots */}
               <div className="flex justify-end gap-1 mb-1">
                 <span className={`w-2 h-2 rounded-full ${team === 2 ? 'bg-orange-500' : 'bg-blue-500'}`} />
-                <span className="w-2 h-2 rounded-full bg-blue-500 opacity-60" />
+                <span className="w-2 h-2 rounded-full bg-blue-500 opacity-40" />
               </div>
 
               {/* Weapon / Skin Image */}
-              <div className="w-full h-24 flex items-center justify-center my-1.5">
+              <div className="w-full h-24 flex items-center justify-center my-1">
                 <img
                   src={item.image}
                   alt={item.weaponTitle}
-                  className="max-w-[150px] max-h-[85px] object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-200"
+                  className="max-w-[150px] max-h-[85px] object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-200"
                   onError={(e) => {
                     e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png';
                   }}
