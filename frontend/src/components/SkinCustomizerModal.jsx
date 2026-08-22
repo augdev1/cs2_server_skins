@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, 
-  Search, 
   Sparkles, 
-  Sliders, 
-  Hash, 
-  Tag, 
-  Zap, 
+  Search, 
   Check, 
-  RotateCcw,
-  CheckCircle2
+  RotateCcw, 
+  Tag, 
+  Sliders, 
+  Activity, 
+  ShieldAlert,
+  Flame,
+  Shield
 } from 'lucide-react';
 import { itemsService, playerService } from '../services/api';
 
@@ -17,6 +18,7 @@ export default function SkinCustomizerModal({
   weapon, 
   team, 
   currentSkin, 
+  initialPaintId,
   isOpen, 
   onClose, 
   onSkinEquipped 
@@ -27,12 +29,13 @@ export default function SkinCustomizerModal({
   const [selectedRarity, setSelectedRarity] = useState('all');
   
   // Customization States
-  const [selectedPaintId, setSelectedPaintId] = useState(currentSkin?.weapon_paint_id || 0);
+  const [selectedPaintId, setSelectedPaintId] = useState(initialPaintId || currentSkin?.weapon_paint_id || 0);
   const [wear, setWear] = useState(currentSkin?.weapon_wear || 0.001);
   const [seed, setSeed] = useState(currentSkin?.weapon_seed || 0);
   const [nametag, setNametag] = useState(currentSkin?.weapon_nametag || '');
   const [stattrak, setStattrak] = useState(currentSkin?.weapon_stattrak === 1);
   const [stattrakCount, setStattrakCount] = useState(currentSkin?.weapon_stattrak_count || 0);
+  const [selectedTeam, setSelectedTeam] = useState(team || 2);
   
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -40,13 +43,13 @@ export default function SkinCustomizerModal({
   useEffect(() => {
     if (!isOpen || !weapon) return;
     
-    // Reset or initialize from equipped skin
-    setSelectedPaintId(currentSkin?.weapon_paint_id || 0);
+    setSelectedPaintId(initialPaintId || currentSkin?.weapon_paint_id || 0);
     setWear(currentSkin?.weapon_wear ?? 0.001);
     setSeed(currentSkin?.weapon_seed ?? 0);
     setNametag(currentSkin?.weapon_nametag || '');
     setStattrak(currentSkin?.weapon_stattrak === 1);
     setStattrakCount(currentSkin?.weapon_stattrak_count || 0);
+    setSelectedTeam(team || 2);
     setSuccessMsg('');
     setSelectedRarity('all');
 
@@ -55,6 +58,9 @@ export default function SkinCustomizerModal({
       try {
         const data = await itemsService.getSkins({ defindex: weapon.defindex });
         setSkins(data);
+        if (initialPaintId) {
+          setSelectedPaintId(initialPaintId);
+        }
       } catch (err) {
         console.error('Erro ao carregar skins:', err);
       } finally {
@@ -62,7 +68,7 @@ export default function SkinCustomizerModal({
       }
     };
     fetchSkins();
-  }, [isOpen, weapon, currentSkin]);
+  }, [isOpen, weapon, currentSkin, initialPaintId, team]);
 
   if (!isOpen || !weapon) return null;
 
@@ -72,11 +78,11 @@ export default function SkinCustomizerModal({
     return matchesSearch && matchesRarity;
   });
 
-
   const selectedSkinObj = skins.find(s => Number(s.paint) === Number(selectedPaintId)) || skins[0];
 
-  const getWearLabel = (val) => {
-    if (val < 0.07) return { label: 'Nova de Fábrica (FN)', color: '#4ade80' };
+  const getWearLabel = (w) => {
+    const val = parseFloat(w);
+    if (val < 0.07) return { label: 'Nova de Fábrica (FN)', color: '#22c55e' };
     if (val < 0.15) return { label: 'Pouco Usada (MW)', color: '#60a5fa' };
     if (val < 0.38) return { label: 'Testada em Campo (FT)', color: '#facc15' };
     if (val < 0.45) return { label: 'Bem Desgastada (WW)', color: '#fb923c' };
@@ -89,9 +95,24 @@ export default function SkinCustomizerModal({
     setSaving(true);
     setSuccessMsg('');
     try {
+      const defindex = Number(weapon.defindex || weapon.weapon_defindex);
+      const isGlove = weapon.isGlove || weapon.weapon_name?.startsWith('gloves_') || (defindex >= 5027 && defindex <= 5035);
+      const isKnife = weapon.isKnife || !!weapon.knife || (defindex >= 500 && defindex <= 526);
+
+      // 1. Se for faca, atualiza o modelo em wp_player_knife
+      if (isKnife && weapon.knife) {
+        await playerService.updateKnife(selectedTeam, weapon.knife);
+      }
+
+      // 2. Se for luva, atualiza o modelo em wp_player_gloves
+      if (isGlove) {
+        await playerService.updateGloves(selectedTeam, defindex);
+      }
+
+      // 3. Salva a skin/pintura em wp_player_skins
       const payload = {
-        weapon_team: team,
-        weapon_defindex: weapon.defindex,
+        weapon_team: selectedTeam,
+        weapon_defindex: defindex,
         weapon_paint_id: Number(selectedPaintId),
         weapon_wear: parseFloat(wear),
         weapon_seed: parseInt(seed) || 0,
@@ -105,12 +126,13 @@ export default function SkinCustomizerModal({
         weapon_sticker_4: '0;0;0;0;0;0;0',
         weapon_keychain: '0;0;0;0;0'
       };
+
       await playerService.updateSkin(payload);
-      setSuccessMsg('Skin equipada e salva no servidor!');
+      setSuccessMsg('Skin equipada e salva com sucesso!');
       onSkinEquipped(payload);
       setTimeout(() => {
         onClose();
-      }, 700);
+      }, 600);
     } catch (err) {
       console.error('Falha ao salvar skin:', err);
     } finally {
@@ -121,12 +143,12 @@ export default function SkinCustomizerModal({
   const handleRestoreDefault = async () => {
     setSaving(true);
     try {
-      await playerService.deleteSkin(team, weapon.defindex);
+      await playerService.deleteSkin(selectedTeam, weapon.defindex);
       setSuccessMsg('Arma restaurada para o padrão.');
-      onSkinEquipped({ weapon_team: team, weapon_defindex: weapon.defindex, isDefault: true });
+      onSkinEquipped({ weapon_team: selectedTeam, weapon_defindex: weapon.defindex, isDefault: true });
       setTimeout(() => {
         onClose();
-      }, 600);
+      }, 500);
     } catch (err) {
       console.error('Falha ao restaurar padrão:', err);
     } finally {
@@ -135,140 +157,81 @@ export default function SkinCustomizerModal({
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(5, 7, 10, 0.85)',
-      backdropFilter: 'blur(16px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 110,
-      padding: '1.5rem'
-    }}>
-      <div className="glass-panel animate-fade-in" style={{
-        maxWidth: '1100px',
-        width: '100%',
-        maxHeight: '90vh',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
-        border: '1px solid rgba(255, 255, 255, 0.15)',
-        overflow: 'hidden'
-      }}>
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-[#101118] border border-[#20222f] rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden">
         {/* Header */}
-        <div style={{
-          padding: '1.25rem 1.75rem',
-          borderBottom: '1px solid var(--border-color)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'rgba(15, 20, 30, 0.6)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span className="font-display" style={{ fontSize: '1.3rem', fontWeight: 800, color: '#fff' }}>
-              {weapon.name}
-            </span>
-            <span style={{
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              padding: '0.2rem 0.6rem',
-              borderRadius: '4px',
-              textTransform: 'uppercase',
-              background: team === 2 ? 'rgba(232, 119, 34, 0.2)' : 'rgba(61, 120, 245, 0.2)',
-              color: team === 2 ? '#ff9d42' : '#6da2ff',
-              border: team === 2 ? '1px solid rgba(232, 119, 34, 0.4)' : '1px solid rgba(61, 120, 245, 0.4)'
-            }}>
-              {team === 2 ? 'Lado Terrorista (TR)' : 'Lado Contra-Terrorista (CT)'}
-            </span>
+        <div className="px-6 py-4 border-b border-[#1c1e28] bg-[#14151f] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-extrabold text-white font-display">
+              {weapon.name || weapon.weaponTitle}
+            </h3>
+            
+            {/* Team Toggle */}
+            <div className="flex items-center bg-[#0c0d12] p-1 rounded-xl border border-white/10 gap-1">
+              <button
+                type="button"
+                onClick={() => setSelectedTeam(2)}
+                className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  selectedTeam === 2 ? 'bg-[#ff5500] text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Flame size={13} /> TR
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTeam(3)}
+                className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  selectedTeam === 3 ? 'bg-[#3d78f5] text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Shield size={13} /> CT
+              </button>
+            </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              padding: '0.3rem',
-              borderRadius: '6px'
-            }}
+            className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-all"
           >
-            <X size={22} />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Modal Body: Split into Left (Skin Catalog) and Right (Customization & Live Preview) */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1.1fr 0.9fr',
-          flex: 1,
-          overflow: 'hidden'
-        }}>
-          {/* LEFT: Skins Grid */}
-          <div style={{
-            padding: '1.5rem',
-            borderRight: '1px solid var(--border-color)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'hidden'
-          }}>
+        {/* Body Grid: Left (Skins Catalog) + Right (Preview & Settings) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-hidden">
+          {/* LEFT: Skins Grid (5 cols) */}
+          <div className="md:col-span-6 border-r border-[#1c1e28] p-5 flex flex-col overflow-hidden bg-[#0d0e14]">
             {/* Search Input */}
-            <div style={{
-              position: 'relative',
-              marginBottom: '0.75rem'
-            }}>
-              <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+            <div className="relative mb-3">
+              <Search size={15} className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar skin por nome..."
-                style={{
-                  width: '100%',
-                  background: 'var(--bg-input)',
-                  border: '1px solid var(--border-color)',
-                  padding: '0.65rem 1rem 0.65rem 2.4rem',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  outline: 'none'
-                }}
+                placeholder="Buscar textura ou pintura..."
+                className="w-full bg-[#141620] border border-[#232636] pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff5500] transition-all"
               />
             </div>
 
-            {/* Rarity Filter Tabs */}
-            <div style={{
-              display: 'flex',
-              gap: '0.35rem',
-              overflowX: 'auto',
-              paddingBottom: '0.5rem',
-              marginBottom: '0.75rem',
-              scrollbarWidth: 'none'
-            }}>
+            {/* Rarity Tabs */}
+            <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
               {[
-                { id: 'all', label: 'Todas', color: '#fff' },
-                { id: 'Covert', label: '★ Covert / Gold', color: '#ffd700' },
-                { id: 'Classified', label: 'Classified (Rosa)', color: '#d32ce6' },
-                { id: 'Restricted', label: 'Restricted (Roxo)', color: '#8847ff' },
-                { id: 'Mil-Spec', label: 'Mil-Spec (Azul)', color: '#4b69ff' }
+                { id: 'all', label: 'Todas' },
+                { id: 'Covert', label: '★ Covert' },
+                { id: 'Classified', label: 'Classified' },
+                { id: 'Restricted', label: 'Restricted' },
+                { id: 'Mil-Spec', label: 'Mil-Spec' }
               ].map(r => (
                 <button
                   key={r.id}
                   type="button"
                   onClick={() => setSelectedRarity(r.id)}
-                  style={{
-                    padding: '0.3rem 0.6rem',
-                    borderRadius: '6px',
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    border: selectedRarity === r.id ? `1px solid ${r.color}` : '1px solid var(--border-color)',
-                    background: selectedRarity === r.id ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                    color: selectedRarity === r.id ? r.color : 'var(--text-muted)'
-                  }}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                    selectedRarity === r.id
+                      ? 'bg-white/15 text-white border border-white/30'
+                      : 'bg-white/5 text-gray-400 hover:text-white'
+                  }`}
                 >
                   {r.label}
                 </button>
@@ -276,21 +239,14 @@ export default function SkinCustomizerModal({
             </div>
 
             {/* Skins List Container */}
-            <div style={{
-              flex: 1,
-              overflowY: 'auto',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(135px, 1fr))',
-              gap: '0.75rem',
-              paddingRight: '0.5rem'
-            }}>
+            <div className="flex-1 overflow-y-auto grid grid-cols-3 gap-2.5 pr-1">
               {loading ? (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                  Carregando skins...
+                <div className="col-span-3 text-center py-12 text-gray-500 text-xs">
+                  Carregando catálogo de skins...
                 </div>
               ) : filteredSkins.length === 0 ? (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                  Nenhuma skin encontrada para o filtro selecionado.
+                <div className="col-span-3 text-center py-12 text-gray-500 text-xs">
+                  Nenhuma skin encontrada para o filtro.
                 </div>
               ) : (
                 filteredSkins.map((s) => {
@@ -301,324 +257,163 @@ export default function SkinCustomizerModal({
                     <div
                       key={s.paint}
                       onClick={() => setSelectedPaintId(s.paint)}
-                      className="glass-panel-hover"
+                      className={`p-2.5 rounded-xl border flex flex-col items-center justify-between cursor-pointer transition-all ${
+                        isSelected 
+                          ? 'bg-[#ff5500]/15 border-[#ff5500] shadow-[0_0_12px_rgba(255,85,0,0.3)]' 
+                          : 'bg-[#141620] border-[#222534] hover:border-white/20'
+                      }`}
                       style={{
-                        background: isSelected ? 'rgba(240, 178, 50, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                        border: isSelected 
-                          ? '2px solid var(--cs-gold)' 
-                          : `1px solid rgba(255, 255, 255, 0.08)`,
-                        borderBottom: isSelected ? '2px solid var(--cs-gold)' : `3px solid ${rarityColor}`,
-                        borderRadius: '10px',
-                        padding: '0.75rem 0.5rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        position: 'relative'
+                        borderBottomColor: isSelected ? '#ff5500' : rarityColor,
+                        borderBottomWidth: '2.5px'
                       }}
                     >
-                      {isSelected && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '6px',
-                          right: '6px',
-                          background: 'var(--cs-gold)',
-                          borderRadius: '50%',
-                          width: '18px',
-                          height: '18px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <Check size={12} color="#000" strokeWidth={3} />
-                        </div>
-                      )}
-
                       <img
                         src={s.image}
                         alt={s.paint_name}
-                        style={{
-                          width: '100px',
-                          height: '65px',
-                          objectFit: 'contain',
-                          marginBottom: '0.4rem',
-                          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))'
-                        }}
+                        className="w-20 h-14 object-contain drop-shadow my-1"
                         onError={(e) => {
                           e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png';
                         }}
                       />
-
-                      <div style={{
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: isSelected ? 'var(--cs-gold)' : '#fff',
-                        lineHeight: 1.2,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}>
+                      <span className="text-[11px] font-bold text-white text-center line-clamp-1 leading-tight">
                         {s.paint_name.replace(/.*\|/, '').trim() || s.paint_name}
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.3rem' }}>
-                        <span style={{
-                          fontSize: '0.6rem',
-                          fontWeight: 700,
-                          color: rarityColor,
-                          background: 'rgba(0,0,0,0.4)',
-                          padding: '0.1rem 0.35rem',
-                          borderRadius: '3px'
-                        }}>
-                          {s.rarity_name?.replace('★ ', '') || 'Skin'}
-                        </span>
-                        <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)' }}>
-                          #{s.paint}
-                        </span>
-                      </div>
+                      </span>
                     </div>
                   );
                 })
               )}
             </div>
-
           </div>
 
-          {/* RIGHT: Live Preview & Customizer Controls */}
-          <div style={{
-            padding: '1.5rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            overflowY: 'auto',
-            background: 'rgba(10, 14, 22, 0.4)'
-          }}>
+          {/* RIGHT: Live Preview & Settings (7 cols) */}
+          <div className="md:col-span-6 p-6 flex flex-col justify-between overflow-y-auto bg-[#101118]">
+            {/* Live Preview Display */}
             <div>
-              {/* Preview Box */}
-              <div style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(240, 178, 50, 0.1) 0%, rgba(12, 16, 26, 0.8) 80%)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'center',
-                marginBottom: '1.25rem',
-                position: 'relative'
-              }}>
-                {stattrak && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '12px',
-                    fontSize: '0.7rem',
-                    fontWeight: 800,
-                    color: '#ff6600',
-                    border: '1px solid rgba(255, 102, 0, 0.4)',
-                    padding: '0.15rem 0.5rem',
-                    borderRadius: '4px',
-                    background: 'rgba(255, 102, 0, 0.1)'
-                  }}>
-                    StatTrak™: {stattrakCount}
-                  </div>
-                )}
-
-                {nametag && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: '#fff',
-                    fontFamily: 'monospace',
-                    background: 'rgba(0, 0, 0, 0.7)',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '4px',
-                    border: '1px solid rgba(255, 255, 255, 0.3)'
-                  }}>
-                    "{nametag}"
-                  </div>
-                )}
-
+              <div className="w-full bg-gradient-to-b from-[#171924] to-[#12131b] border border-[#232638] rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden mb-6">
                 <img
                   src={selectedSkinObj?.image || weapon.image}
-                  alt={selectedSkinObj?.paint_name || weapon.name}
-                  style={{
-                    width: '100%',
-                    maxHeight: '160px',
-                    objectFit: 'contain',
-                    filter: 'drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7))'
-                  }}
+                  alt="Preview"
+                  className="max-w-[260px] max-h-[140px] object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
                 />
 
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', marginTop: '0.5rem' }}>
-                  {selectedSkinObj?.paint_name || weapon.name}
-                </h4>
-              </div>
-
-              {/* Slider: Float / Wear */}
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <Sliders size={14} /> Float / Desgaste
-                  </label>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: wearInfo.color }}>
-                    {wearInfo.label} ({parseFloat(wear).toFixed(4)})
-                  </span>
+                <div className="text-center mt-3">
+                  <h4 className="text-base font-extrabold text-white">
+                    {selectedSkinObj?.paint_name || weapon.name}
+                  </h4>
+                  <div className="flex items-center justify-center gap-2 mt-1">
+                    <span 
+                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-black/50"
+                      style={{ color: selectedSkinObj?.rarity_color || '#ff5500' }}
+                    >
+                      {selectedSkinObj?.rarity_name?.replace('★ ', '') || 'Covert'}
+                    </span>
+                    <span className="text-xs text-gray-400 font-mono">
+                      Paint ID: {selectedPaintId}
+                    </span>
+                  </div>
                 </div>
-                <input
-                  type="range"
-                  min="0.0001"
-                  max="1.0"
-                  step="0.0001"
-                  value={wear}
-                  onChange={(e) => setWear(e.target.value)}
-                  style={{
-                    width: '100%',
-                    accentColor: 'var(--cs-gold)',
-                    cursor: 'pointer'
-                  }}
-                />
               </div>
 
-              {/* Pattern Seed */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              {/* Customizer Controls: Wear Slider, Seed, StatTrak, Nametag */}
+              <div className="space-y-4">
+                {/* Wear / Float Slider */}
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
-                    Pattern Seed (0 - 1000)
-                  </label>
+                  <div className="flex justify-between items-center text-xs mb-1.5">
+                    <span className="font-semibold text-gray-300">Desgaste (Float / Wear)</span>
+                    <span className="font-bold text-xs" style={{ color: wearInfo.color }}>
+                      {wearInfo.label} ({Number(wear).toFixed(4)})
+                    </span>
+                  </div>
                   <input
-                    type="number"
-                    min="0"
-                    max="1000"
-                    value={seed}
-                    onChange={(e) => setSeed(e.target.value)}
-                    style={{
-                      width: '100%',
-                      background: 'var(--bg-input)',
-                      border: '1px solid var(--border-color)',
-                      padding: '0.55rem 0.75rem',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '0.85rem'
-                    }}
+                    type="range"
+                    min="0.0001"
+                    max="1.0000"
+                    step="0.001"
+                    value={wear}
+                    onChange={(e) => setWear(e.target.value)}
+                    className="w-full accent-[#ff5500] cursor-pointer"
                   />
                 </div>
 
-                {/* Nametag Input */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
-                    Nametag (Nome Gravado)
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={20}
-                    placeholder="Ex: Minha Skin"
-                    value={nametag}
-                    onChange={(e) => setNametag(e.target.value)}
-                    style={{
-                      width: '100%',
-                      background: 'var(--bg-input)',
-                      border: '1px solid var(--border-color)',
-                      padding: '0.55rem 0.75rem',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '0.85rem'
-                    }}
-                  />
-                </div>
-              </div>
+                {/* Seed & Nametag Row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 mb-1">
+                      Pattern Seed (0 - 1000)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1000"
+                      value={seed}
+                      onChange={(e) => setSeed(e.target.value)}
+                      className="w-full bg-[#161824] border border-[#26293c] px-3 py-2 rounded-xl text-xs text-white outline-none focus:border-[#ff5500]"
+                    />
+                  </div>
 
-              {/* StatTrak Controls */}
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '8px',
-                padding: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '1.25rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input
-                    type="checkbox"
-                    id="stattrak-check"
-                    checked={stattrak}
-                    onChange={(e) => setStattrak(e.target.checked)}
-                    style={{ accentColor: '#ff6600', cursor: 'pointer', width: '16px', height: '16px' }}
-                  />
-                  <label htmlFor="stattrak-check" style={{ fontSize: '0.8rem', fontWeight: 700, color: stattrak ? '#ff6600' : 'var(--text-muted)', cursor: 'pointer' }}>
-                    StatTrak™ Habilitado
-                  </label>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 mb-1">
+                      Nametag (Nome gravado)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={20}
+                      value={nametag}
+                      onChange={(e) => setNametag(e.target.value)}
+                      placeholder="Ex: Minha Skin"
+                      className="w-full bg-[#161824] border border-[#26293c] px-3 py-2 rounded-xl text-xs text-white outline-none focus:border-[#ff5500]"
+                    />
+                  </div>
                 </div>
 
-                {stattrak && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Kills:</span>
+                {/* StatTrak Row */}
+                <div className="flex items-center justify-between p-3 bg-[#161824] border border-[#26293c] rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="stattrak-check"
+                      checked={stattrak}
+                      onChange={(e) => setStattrak(e.target.checked)}
+                      className="w-4 h-4 accent-[#ff5500] rounded cursor-pointer"
+                    />
+                    <label htmlFor="stattrak-check" className="text-xs font-bold text-orange-400 cursor-pointer">
+                      Equipar StatTrak™ (Contador de Kills)
+                    </label>
+                  </div>
+
+                  {stattrak && (
                     <input
                       type="number"
                       min="0"
                       value={stattrakCount}
                       onChange={(e) => setStattrakCount(e.target.value)}
-                      style={{
-                        width: '70px',
-                        background: 'var(--bg-input)',
-                        border: '1px solid rgba(255, 102, 0, 0.3)',
-                        color: '#ff6600',
-                        fontWeight: 700,
-                        padding: '0.25rem 0.5rem',
-                        borderRadius: '4px',
-                        fontSize: '0.8rem'
-                      }}
+                      className="w-24 bg-[#0d0e14] border border-[#26293c] px-2 py-1 rounded-lg text-xs text-white text-right font-mono"
                     />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Actions & Feedback */}
-            <div>
-              {successMsg && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: '#4ade80',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  marginBottom: '0.75rem'
-                }}>
-                  <CheckCircle2 size={16} />
-                  <span>{successMsg}</span>
-                </div>
-              )}
+            {/* Bottom Actions */}
+            <div className="pt-4 mt-6 border-t border-[#1c1e28] flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleRestoreDefault}
+                disabled={saving}
+                className="px-4 py-2.5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <RotateCcw size={14} /> Restaurar Padrão
+              </button>
 
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button
-                  type="button"
-                  onClick={handleRestoreDefault}
-                  className="btn-secondary"
-                  style={{ fontSize: '0.85rem', padding: '0.65rem 1rem' }}
-                  title="Restaurar skin padrão original do CS2"
-                >
-                  <RotateCcw size={15} />
-                  <span>Padrão</span>
-                </button>
-
-                <button
-                  id="btn-equip-skin"
-                  type="button"
-                  onClick={handleEquipSkin}
-                  className="btn-primary"
-                  style={{ flex: 1, justifyContent: 'center' }}
-                  disabled={saving}
-                >
-                  <Sparkles size={16} />
-                  <span>{saving ? 'Equipando...' : 'Equipar Esta Skin'}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleEquipSkin}
+                disabled={saving}
+                className="flex-1 bg-[#ff5500] hover:bg-[#e64d00] text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-[0_4px_20px_rgba(255,85,0,0.35)] transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-95"
+              >
+                <Check size={16} strokeWidth={3} />
+                <span>{saving ? 'Salvando...' : 'Salvar e Equipar Skin'}</span>
+              </button>
             </div>
           </div>
         </div>
