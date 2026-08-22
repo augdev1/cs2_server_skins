@@ -1,0 +1,282 @@
+[
+  {
+    "defindex": 1,
+    "name": "Desert Eagle",
+    "weapon_name": "weapon_deagle",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_deagle.png"
+  },
+  {
+    "defindex": 2,
+    "name": "Dual Berettas",
+    "weapon_name": "weapon_elite",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_elite.png"
+  },
+  {
+    "defindex": 3,
+    "name": "Five-SeveN",
+    "weapon_name": "weapon_fiveseven",
+    "category": "pistols",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_fiveseven.png"
+  },
+  {
+    "defindex": 4,
+    "name": "Glock-18",
+    "weapon_name": "weapon_glock",
+    "category": "pistols",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_glock.png"
+  },
+  {
+    "defindex": 30,
+    "name": "Tec-9",
+    "weapon_name": "weapon_tec9",
+    "category": "pistols",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_tec9.png"
+  },
+  {
+    "defindex": 31,
+    "name": "Zeus x27",
+    "weapon_name": "weapon_taser",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_taser.png"
+  },
+  {
+    "defindex": 32,
+    "name": "P2000",
+    "weapon_name": "weapon_hkp2000",
+    "category": "pistols",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_hkp2000.png"
+  },
+  {
+    "defindex": 36,
+    "name": "P250",
+    "weapon_name": "weapon_p250",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_p250.png"
+  },
+  {
+    "defindex": 61,
+    "name": "USP-S",
+    "weapon_name": "weapon_usp_silencer",
+    "category": "pistols",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_usp_silencer.png"
+  },
+  {
+    "defindex": 63,
+    "name": "CZ75-Auto",
+    "weapon_name": "weapon_cz75a",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_cz75a.png"
+  },
+  {
+    "defindex": 64,
+    "name": "R8 Revolver",
+    "weapon_name": "weapon_revolver",
+    "category": "pistols",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_revolver.png"
+  },
+  {
+    "defindex": 7,
+    "name": "AK-47",
+    "weapon_name": "weapon_ak47",
+    "category": "rifles",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ak47.png"
+  },
+  {
+    "defindex": 8,
+    "name": "AUG",
+    "weapon_name": "weapon_aug",
+    "category": "rifles",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_aug.png"
+  },
+  {
+    "defindex": 10,
+    "name": "FAMAS",
+    "weapon_name": "weapon_famas",
+    "category": "rifles",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_famas.png"
+  },
+  {
+    "defindex": 13,
+    "name": "Galil AR",
+    "weapon_name": "weapon_galilar",
+    "category": "rifles",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_galilar.png"
+  },
+  {
+    "defindex": 16,
+    "name": "M4A4",
+    "weapon_name": "weapon_m4a1",
+    "category": "rifles",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_m4a1.png"
+  },
+  {
+    "defindex": 60,
+    "name": "M4A1-S",
+    "weapon_name": "weapon_m4a1_silencer",
+    "category": "rifles",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_m4a1_silencer.png"
+  },
+  {
+    "defindex": 39,
+    "name": "SG 553",
+    "weapon_name": "weapon_sg556",
+    "category": "rifles",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_sg556.png"
+  },
+  {
+    "defindex": 9,
+    "name": "AWP",
+    "weapon_name": "weapon_awp",
+    "category": "sniper_rifles",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_awp.png"
+  },
+  {
+    "defindex": 11,
+    "name": "G3SG1",
+    "weapon_name": "weapon_g3sg1",
+    "category": "sniper_rifles",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_g3sg1.png"
+  },
+  {
+    "defindex": 38,
+    "name": "SCAR-20",
+    "weapon_name": "weapon_scar20",
+    "category": "sniper_rifles",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_scar20.png"
+  },
+  {
+    "defindex": 40,
+    "name": "SSG 08",
+    "weapon_name": "weapon_ssg08",
+    "category": "sniper_rifles",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ssg08.png"
+  },
+  {
+    "defindex": 17,
+    "name": "MAC-10",
+    "weapon_name": "weapon_mac10",
+    "category": "smg",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_mac10.png"
+  },
+  {
+    "defindex": 19,
+    "name": "P90",
+    "weapon_name": "weapon_p90",
+    "category": "smg",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_p90.png"
+  },
+  {
+    "defindex": 23,
+    "name": "MP5-SD",
+    "weapon_name": "weapon_mp5sd",
+    "category": "smg",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_mp5sd.png"
+  },
+  {
+    "defindex": 24,
+    "name": "UMP-45",
+    "weapon_name": "weapon_ump45",
+    "category": "smg",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_ump45.png"
+  },
+  {
+    "defindex": 26,
+    "name": "PP-Bizon",
+    "weapon_name": "weapon_bizon",
+    "category": "smg",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_bizon.png"
+  },
+  {
+    "defindex": 33,
+    "name": "MP7",
+    "weapon_name": "weapon_mp7",
+    "category": "smg",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_mp7.png"
+  },
+  {
+    "defindex": 34,
+    "name": "MP9",
+    "weapon_name": "weapon_mp9",
+    "category": "smg",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_mp9.png"
+  },
+  {
+    "defindex": 25,
+    "name": "XM1014",
+    "weapon_name": "weapon_xm1014",
+    "category": "shotguns",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_xm1014.png"
+  },
+  {
+    "defindex": 27,
+    "name": "MAG-7",
+    "weapon_name": "weapon_mag7",
+    "category": "shotguns",
+    "team": "ct",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_mag7.png"
+  },
+  {
+    "defindex": 29,
+    "name": "Sawed-Off",
+    "weapon_name": "weapon_sawedoff",
+    "category": "shotguns",
+    "team": "t",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_sawedoff.png"
+  },
+  {
+    "defindex": 35,
+    "name": "Nova",
+    "weapon_name": "weapon_nova",
+    "category": "shotguns",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_nova.png"
+  },
+  {
+    "defindex": 14,
+    "name": "M249",
+    "weapon_name": "weapon_m249",
+    "category": "machine_guns",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_m249.png"
+  },
+  {
+    "defindex": 28,
+    "name": "Negev",
+    "weapon_name": "weapon_negev",
+    "category": "machine_guns",
+    "team": "any",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_negev.png"
+  }
+]
