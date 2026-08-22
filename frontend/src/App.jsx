@@ -153,13 +153,55 @@ export default function App() {
     showToast(`Bem-vindo, ${userData.personaname}!`);
   };
 
-  // Quando o usuário seleciona uma skin na aba "Criar Item"
-  const handleSelectSkinFromAddView = (item) => {
+  // Quando o usuário seleciona um item na aba "Criar Item"
+  const handleSelectSkinFromAddView = async (item) => {
     if (!user) {
       setIsDevLoginOpen(true);
       return;
     }
+
+    // 1. Se for Agente (Personagem)
+    if (item.isAgent || item.agent_id) {
+      const agentTeam = item.team === 'ct' ? 3 : 2;
+      try {
+        await playerService.updateAgent(agentTeam, item.name);
+        setEquipment(prev => {
+          const next = JSON.parse(JSON.stringify(prev || {}));
+          const tKey = agentTeam === 3 ? 'ct' : 't';
+          if (!next[tKey]) next[tKey] = { skins: {} };
+          next[tKey].agent = item.name;
+          localStorage.setItem('cs2_equipment_cache', JSON.stringify(next));
+          return next;
+        });
+        showToast(`Agente '${item.name}' equipado com sucesso para o lado ${agentTeam === 3 ? 'CT' : 'TR'}!`);
+      } catch (err) {
+        console.error('Erro ao equipar agente:', err);
+        showToast('Erro ao equipar agente no servidor.', 'error');
+      }
+      return;
+    }
+
+    // 2. Se for Kit de Música
+    if (item.isMusic || item.music_id) {
+      try {
+        await playerService.updateMusic(team, item.music_id);
+        setEquipment(prev => {
+          const next = JSON.parse(JSON.stringify(prev || {}));
+          const tKey = team === 3 ? 'ct' : 't';
+          if (!next[tKey]) next[tKey] = { skins: {} };
+          next[tKey].music = item.music_id;
+          localStorage.setItem('cs2_equipment_cache', JSON.stringify(next));
+          return next;
+        });
+        showToast(`Trilha Sonora '${item.name}' equipada com sucesso!`);
+      } catch (err) {
+        console.error('Erro ao equipar trilha sonora:', err);
+        showToast('Erro ao equipar trilha sonora.', 'error');
+      }
+      return;
+    }
     
+    // 3. Se for Faca, Luva ou Arma regular
     const baseWeapon = weapons.find(w => w.defindex === item.weapon_defindex) || 
                        knives.find(k => k.defindex === item.weapon_defindex) ||
                        item;

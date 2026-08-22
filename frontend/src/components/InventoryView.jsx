@@ -3,7 +3,9 @@ import {
   Plus, 
   Search, 
   Sparkles,
-  Sliders
+  Sliders,
+  UserCheck,
+  Music
 } from 'lucide-react';
 import TeamSelector from './TeamSelector';
 
@@ -77,7 +79,45 @@ export default function InventoryView({
     });
   }
 
-  // 3. Regular Weapons with equipped skins or common weapons
+  // 3. Equipped Agent
+  const equippedAgentName = currentTeamEquipment.agent;
+  const agentItem = agents.find(a => a.name === equippedAgentName || a.agent_id === equippedAgentName || (team === 2 ? a.team === 't' : a.team === 'ct'));
+  if (agentItem) {
+    inventoryItems.push({
+      id: `agent_${agentItem.agent_id || 'default'}`,
+      type: 'agent',
+      category: 'agents',
+      defindex: 0,
+      weaponTitle: '★ Agente',
+      skinTitle: agentItem.name,
+      image: agentItem.image,
+      rarityColor: '#d32ce6',
+      itemObj: agentItem,
+      isAgent: true,
+      hasCustom: !!equippedAgentName
+    });
+  }
+
+  // 4. Equipped Music Kit
+  const equippedMusicId = currentTeamEquipment.music;
+  const musicItem = music.find(m => Number(m.music_id) === Number(equippedMusicId));
+  if (musicItem) {
+    inventoryItems.push({
+      id: `music_${musicItem.music_id}`,
+      type: 'music',
+      category: 'music',
+      defindex: 0,
+      weaponTitle: 'Kit de Música',
+      skinTitle: musicItem.name,
+      image: musicItem.image,
+      rarityColor: '#4b69ff',
+      itemObj: musicItem,
+      isMusic: true,
+      hasCustom: true
+    });
+  }
+
+  // 5. Regular Weapons with equipped skins or common weapons
   const primaryWeaponNames = [
     'weapon_ak47', 'weapon_m4a1_silencer', 'weapon_m4a1', 'weapon_awp', 
     'weapon_deagle', 'weapon_usp_silencer', 'weapon_glock', 'weapon_ssg08',
@@ -118,6 +158,7 @@ export default function InventoryView({
     if (activeCategoryFilter === 'all') return true;
     if (activeCategoryFilter === 'knives') return item.type === 'knife';
     if (activeCategoryFilter === 'gloves') return item.type === 'glove';
+    if (activeCategoryFilter === 'agents') return item.type === 'agent';
     if (activeCategoryFilter === 'custom') return item.hasCustom;
     return item.category === activeCategoryFilter;
   });
@@ -144,6 +185,7 @@ export default function InventoryView({
               { id: 'custom', label: '★ Personalizados' },
               { id: 'knives', label: 'Facas' },
               { id: 'gloves', label: 'Luvas' },
+              { id: 'agents', label: 'Agentes' },
             ].map(pill => (
               <button
                 key={pill.id}
@@ -193,12 +235,18 @@ export default function InventoryView({
         {filteredItems.map((item) => (
           <div
             key={item.id}
-            onClick={() => onCustomizeWeapon(item.itemObj)}
+            onClick={() => {
+              if (item.isAgent || item.isMusic) {
+                onOpenAdd();
+              } else {
+                onCustomizeWeapon(item.itemObj);
+              }
+            }}
             className="group relative bg-[#090909] hover:bg-[#121212] border border-[#1a1a1a] hover:border-[#ff2020] rounded-2xl p-3.5 flex flex-col items-center justify-between min-h-[210px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
           >
             {/* Top Bar inside Card */}
             <div className="w-full flex items-center justify-between z-10">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate max-w-[80%]">
                 {item.weaponTitle}
               </span>
               
@@ -214,7 +262,7 @@ export default function InventoryView({
               <img
                 src={item.image}
                 alt={item.skinTitle}
-                className="max-h-[105px] max-w-[135px] object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-300"
+                className="max-h-[110px] max-w-[135px] object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-300"
                 loading="lazy"
                 onError={(e) => {
                   e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png';
@@ -241,8 +289,8 @@ export default function InventoryView({
             {/* Hover Action Overlay */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl z-20">
               <div className="flex items-center gap-1.5 bg-[#ff2020] text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                <Sliders size={13} />
-                <span>Personalizar</span>
+                {item.isAgent || item.isMusic ? <UserCheck size={13} /> : <Sliders size={13} />}
+                <span>{item.isAgent ? 'Trocar Agente' : item.isMusic ? 'Trocar Música' : 'Personalizar'}</span>
               </div>
             </div>
           </div>
