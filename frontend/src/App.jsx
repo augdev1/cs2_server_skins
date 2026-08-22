@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
+import LoginView from './components/LoginView';
 import InventoryView from './components/InventoryView';
 import AddItemView from './components/AddItemView';
 import DevLoginModal from './components/DevLoginModal';
@@ -10,7 +11,7 @@ import { Sparkles, AlertCircle } from 'lucide-react';
 export default function App() {
   const [user, setUser] = useState(null);
   const [isDevLoginOpen, setIsDevLoginOpen] = useState(false);
-  const [currentView, setCurrentView] = useState('inventory'); // 'inventory' | 'add'
+  const [currentView, setCurrentView] = useState('login'); // 'login' | 'inventory' | 'add'
   const [team, setTeam] = useState(2); // 2 = TR, 3 = CT
 
   // Data states
@@ -56,10 +57,14 @@ export default function App() {
         try {
           const userData = await authService.getMe();
           setUser(userData);
+          setCurrentView('inventory');
         } catch {
           authService.logout();
           setUser(null);
+          setCurrentView('login');
         }
+      } else {
+        setCurrentView('login');
       }
     };
     initAuth();
@@ -112,9 +117,12 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchEquipment();
+    if (user) {
+      fetchEquipment();
+    }
   }, [user]);
 
+  // Logout Handler: Immediately clears session and redirects to login view
   const handleLogout = () => {
     authService.logout();
     setUser(null);
@@ -122,17 +130,21 @@ export default function App() {
       t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
       ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
     });
+    setCurrentView('login');
     showToast('Sessão encerrada com sucesso.');
   };
 
+  // Login Success Handler
   const handleLoginSuccess = (userData) => {
     setUser(userData);
+    setCurrentView('inventory');
     showToast(`Bem-vindo, ${userData.personaname}!`);
   };
 
   // Quando o usuário seleciona uma skin na aba "Criar Item"
   const handleSelectSkinFromAddView = (item) => {
     if (!user) {
+      setCurrentView('login');
       setIsDevLoginOpen(true);
       return;
     }
@@ -172,15 +184,25 @@ export default function App() {
       {/* Left Vertical Sidebar in True Black & Vivid Red */}
       <Sidebar
         currentView={currentView}
-        onNavigate={(view) => setCurrentView(view)}
+        onNavigate={(view) => {
+          if (!user && (view === 'inventory' || view === 'add')) {
+            setCurrentView('login');
+            showToast('Por favor, faça login para acessar o inventário.', 'error');
+            return;
+          }
+          setCurrentView(view);
+        }}
         user={user}
         onOpenDevLogin={() => setIsDevLoginOpen(true)}
         onLogout={handleLogout}
       />
 
-      {/* Main Content Area in Pure Black */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#000000]">
-        {currentView === 'add' ? (
+        {!user || currentView === 'login' ? (
+          /* View 0: Página Inicial / Login */
+          <LoginView onOpenDevLogin={() => setIsDevLoginOpen(true)} />
+        ) : currentView === 'add' ? (
           /* View 2: "Criar Item / Passo 1 de 2" */
           <AddItemView
             skins={allSkins}
@@ -208,6 +230,7 @@ export default function App() {
               onOpenAdd={() => setCurrentView('add')}
               onCustomizeWeapon={(weaponObj) => {
                 if (!user) {
+                  setCurrentView('login');
                   setIsDevLoginOpen(true);
                   return;
                 }
