@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Home,
   Box, 
   Plus, 
   Terminal, 
@@ -22,11 +21,17 @@ export default function Sidebar({
 
   return (
     <aside className="w-16 bg-[#000000] border-r border-[#141414] flex flex-col items-center py-4 justify-between select-none z-40 shrink-0 min-h-screen">
-      {/* Top: Logo & Main Navigation Group */}
+      {/* Top: CS PLAY Logo & Navigation Icons */}
       <div className="flex flex-col items-center gap-4 w-full px-2">
         {/* CS PLAY Logo */}
         <div 
-          onClick={() => onNavigate(user ? 'inventory' : 'login')}
+          onClick={() => {
+            if (user) {
+              onNavigate('inventory');
+            } else {
+              onNavigate('login');
+            }
+          }}
           className="flex flex-col items-center cursor-pointer group mb-1"
           title="CS PLAY"
         >
@@ -40,23 +45,9 @@ export default function Sidebar({
           </span>
         </div>
 
-        {/* Compact Navigation Menu */}
+        {/* Compact Navigation Menu (Inventário e Adicionar Item) */}
         <nav className="flex flex-col items-center gap-1.5 w-full">
-          {/* Home / Início */}
-          <button
-            type="button"
-            onClick={() => onNavigate('login')}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-              currentView === 'login'
-                ? 'text-[#ff2020] bg-[#ff2020]/15 border border-[#ff2020]/40 shadow-[0_0_10px_rgba(255,32,32,0.3)]'
-                : 'text-gray-400 hover:text-white hover:bg-[#0e0e0e]'
-            }`}
-            title="Página Inicial"
-          >
-            <Home size={18} />
-          </button>
-
-          {/* Inventário */}
+          {/* Meu Inventário */}
           <button
             type="button"
             onClick={() => {
