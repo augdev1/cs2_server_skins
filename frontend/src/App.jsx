@@ -299,7 +299,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#000000] text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen flex text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased overflow-x-hidden">
       {/* Toast Notification */}
       {toast && (
         <div 
@@ -314,13 +314,13 @@ export default function App() {
         </div>
       )}
 
-      {/* Se o usuário NÃO estiver logado: Exibe a tela inicial de login em tela cheia */}
+      {/* Se o usuário NÃO estiver logado: Exibe a tela inicial de login com papel de parede */}
       {!user ? (
         <div className="flex-1 flex flex-col min-w-0">
           <LoginView onOpenDevLogin={() => setIsDevLoginOpen(true)} />
         </div>
       ) : (
-        /* Se o usuário ESTIVER logado: Exibe a sidebar do usuário com Inventário e Catálogo */
+        /* Se o usuário ESTIVER logado: Exibe a sidebar e o inventário com fundo temático */
         <>
           <Sidebar
             currentView={currentView}
@@ -333,7 +333,7 @@ export default function App() {
             onLogout={handleLogout}
           />
 
-          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#000000]">
+          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-black/25 backdrop-blur-[1px]">
             {currentView === 'add' ? (
               /* View 2: "Criar Item / Passo 1 de 2" */
               <AddItemView
@@ -349,7 +349,7 @@ export default function App() {
               />
             ) : (
               /* View 1: "Meu Inventário" */
-              <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6 bg-[#000000]">
+              <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6">
                 <InventoryView
                   weapons={weapons}
                   knives={knives}

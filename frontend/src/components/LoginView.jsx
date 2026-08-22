@@ -20,30 +20,29 @@ export default function LoginView({ onOpenDevLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden select-none">
-      {/* Background Glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#ff2020]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-72 h-72 bg-red-950/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-hidden select-none bg-black/40 backdrop-blur-[2px]">
+      {/* Subtle Glows */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#ff2020]/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-md w-full flex flex-col items-center text-center relative z-10 space-y-8 animate-fade-in">
+      <div className="max-w-md w-full flex flex-col items-center text-center relative z-10 space-y-7 animate-fade-in">
         {/* Logo CS PLAY */}
         <div className="flex flex-col items-center gap-2">
-          <div className="w-16 h-16 rounded-2xl bg-[#0a0a0a] border border-[#222222] flex items-center justify-center shadow-[0_0_30px_rgba(255,32,32,0.4)]">
+          <div className="w-16 h-16 rounded-2xl bg-[#090909]/90 border border-[#ff2020]/40 flex items-center justify-center shadow-[0_0_35px_rgba(255,32,32,0.5)] backdrop-blur-md">
             <span className="font-black text-2xl tracking-tighter text-[#ff2020] font-display">
               CS
             </span>
           </div>
-          <h1 className="text-3xl font-black tracking-wider text-white uppercase font-display mt-1">
+          <h1 className="text-3xl font-black tracking-wider text-white uppercase font-display mt-1 drop-shadow-md">
             CS PLAY <span className="text-[#ff2020]">SKINS</span>
           </h1>
-          <p className="text-xs text-gray-400 max-w-sm">
+          <p className="text-xs text-gray-300 max-w-sm drop-shadow">
             Gerencie e personalize seu inventário de skins, facas e luvas no servidor de Counter-Strike 2.
           </p>
         </div>
 
-        {/* Login Action Card */}
-        <div className="w-full bg-[#080808] border border-[#1a1a1a] rounded-2xl p-6 shadow-[0_15px_40px_rgba(0,0,0,0.9)] space-y-4">
-          <div className="text-left border-b border-[#161616] pb-3">
+        {/* Login Action Card with Glassmorphism */}
+        <div className="w-full bg-[#080808]/85 border border-[#222222]/80 backdrop-blur-xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.9)] space-y-4">
+          <div className="text-left border-b border-[#1c1c1c] pb-3">
             <h2 className="text-sm font-extrabold text-white uppercase tracking-wider font-display">
               Autenticação de Jogador
             </h2>
@@ -57,7 +56,7 @@ export default function LoginView({ onOpenDevLogin }) {
             type="button"
             onClick={handleSteamLogin}
             disabled={steamLoading}
-            className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold py-3.5 px-5 rounded-xl text-xs flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(255,32,32,0.45)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95 group font-display tracking-wider"
+            className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold py-3.5 px-5 rounded-xl text-xs flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(255,32,32,0.5)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95 group font-display tracking-wider"
           >
             {/* Official Steam Icon */}
             <svg 
@@ -70,42 +69,37 @@ export default function LoginView({ onOpenDevLogin }) {
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-2">
-            <div className="flex-1 h-px bg-[#1a1a1a]" />
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">OU</span>
-            <div className="flex-1 h-px bg-[#1a1a1a]" />
+          {/* Direct Developer Login (Quick Test) */}
+          <div className="pt-2 text-center">
+            <button
+              type="button"
+              onClick={onOpenDevLogin}
+              className="text-[11px] text-gray-500 hover:text-gray-300 transition-colors cursor-pointer flex items-center justify-center gap-1.5 mx-auto hover:underline"
+            >
+              <Terminal size={12} />
+              <span>Login Rápido de Teste (SteamID Direto)</span>
+            </button>
           </div>
-
-          {/* Dev / Manual SteamID Button */}
-          <button
-            type="button"
-            onClick={onOpenDevLogin}
-            className="w-full bg-[#0d0d0d] hover:bg-[#141414] border border-[#222222] hover:border-amber-500/50 text-gray-300 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            <Terminal size={15} className="text-amber-400" />
-            <span>Entrar com SteamID manual (Dev Login)</span>
-          </button>
         </div>
 
-        {/* Feature badges */}
-        <div className="grid grid-cols-3 gap-3 w-full text-left">
-          <div className="bg-[#080808] border border-[#141414] p-3 rounded-xl">
-            <Zap size={16} className="text-[#ff2020] mb-1.5" />
-            <div className="text-xs font-bold text-white">Sincronização</div>
-            <div className="text-[10px] text-gray-500">Comando !ws no chat do servidor</div>
+        {/* Feature Badges */}
+        <div className="grid grid-cols-3 gap-3 w-full text-center">
+          <div className="bg-[#0a0a0a]/70 border border-[#1a1a1a] backdrop-blur-md p-3 rounded-2xl">
+            <Flame size={16} className="mx-auto text-[#ff2020] mb-1" />
+            <p className="text-[10px] font-bold text-gray-200">Skins & Facas</p>
+            <p className="text-[9px] text-gray-400">100% CS2 Atualizado</p>
           </div>
 
-          <div className="bg-[#080808] border border-[#141414] p-3 rounded-xl">
-            <Layers size={16} className="text-[#ff2020] mb-1.5" />
-            <div className="text-xs font-bold text-white">+2.000 Skins</div>
-            <div className="text-[10px] text-gray-500">Facas, Luvas e Armas oficiais</div>
+          <div className="bg-[#0a0a0a]/70 border border-[#1a1a1a] backdrop-blur-md p-3 rounded-2xl">
+            <Zap size={16} className="mx-auto text-amber-400 mb-1" />
+            <p className="text-[10px] font-bold text-gray-200">Instantâneo</p>
+            <p className="text-[9px] text-gray-400">Salva direto no server</p>
           </div>
 
-          <div className="bg-[#080808] border border-[#141414] p-3 rounded-xl">
-            <Sparkles size={16} className="text-[#ff2020] mb-1.5" />
-            <div className="text-xs font-bold text-white">Customização</div>
-            <div className="text-[10px] text-gray-500">Float, StatTrak e Seeds</div>
+          <div className="bg-[#0a0a0a]/70 border border-[#1a1a1a] backdrop-blur-md p-3 rounded-2xl">
+            <Crosshair size={16} className="mx-auto text-blue-400 mb-1" />
+            <p className="text-[10px] font-bold text-gray-200">Agentes & Luvas</p>
+            <p className="text-[9px] text-gray-400">TR e CT separados</p>
           </div>
         </div>
       </div>
