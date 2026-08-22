@@ -8,11 +8,6 @@ import {
   SlidersHorizontal,
   Flame,
   Shield,
-  Zap,
-  Radio,
-  Layers,
-  Target,
-  Sparkles,
   X
 } from 'lucide-react';
 import KnifeIcon from './KnifeIcon';
@@ -27,15 +22,18 @@ export default function AddItemView({
   onBack, 
   onSelectSkin 
 }) {
-  const [selectedSubTab, setSelectedSubTab] = useState('skins'); // skins, gloves, knives, agents, music
+  const [selectedSubTab, setSelectedSubTab] = useState('skins'); // skins, knives, gloves, agents, music
   const [search, setSearch] = useState('');
   const [gridMode, setGridMode] = useState('large'); // large | compact
   
-  // Right sidebar filters
+  // Right sidebar filter states
   const [selectedRarities, setSelectedRarities] = useState([]);
-  const [selectedWeaponDefindexes, setSelectedWeaponDefindexes] = useState([]);
-  
-  const [isWeaponsOpen, setIsWeaponsOpen] = useState(true);
+  const [selectedWeaponDefindex, setSelectedWeaponDefindex] = useState(null); // single or multi
+  const [selectedKnifeDefindex, setSelectedKnifeDefindex] = useState(null);
+  const [selectedGloveType, setSelectedGloveType] = useState(null);
+  const [selectedAgentTeam, setSelectedAgentTeam] = useState(null);
+
+  const [isTypeSectionOpen, setIsTypeSectionOpen] = useState(true);
   const [isRaritiesOpen, setIsRaritiesOpen] = useState(true);
 
   // Rarities definition
@@ -49,60 +47,79 @@ export default function AddItemView({
     { id: 'Contraband', label: 'Contraband', color: '#ffd700' }
   ];
 
-  // Popular quick-filter weapons
-  const POPULAR_WEAPONS = [
-    { defindex: 7, name: 'AK-47' },
-    { defindex: 16, name: 'M4A4' },
-    { defindex: 60, name: 'M4A1-S' },
-    { defindex: 9, name: 'AWP' },
-    { defindex: 1, name: 'Desert Eagle' },
-    { defindex: 61, name: 'USP-S' },
-    { defindex: 4, name: 'Glock-18' },
-    { defindex: 40, name: 'SSG 08' }
-  ];
+  // List of all Knife Types
+  const KNIFE_TYPES = useMemo(() => [
+    { defindex: 500, label: 'Bayonet' },
+    { defindex: 514, label: 'Bowie' },
+    { defindex: 515, label: 'Butterfly' },
+    { defindex: 503, label: 'Classic' },
+    { defindex: 512, label: 'Falchion' },
+    { defindex: 505, label: 'Flip' },
+    { defindex: 506, label: 'Gut' },
+    { defindex: 509, label: 'Huntsman' },
+    { defindex: 507, label: 'Karambit' },
+    { defindex: 508, label: 'M9 Bayonet' },
+    { defindex: 520, label: 'Navaja' },
+    { defindex: 521, label: 'Nomad' },
+    { defindex: 517, label: 'Paracord' },
+    { defindex: 516, label: 'Shadow Daggers' },
+    { defindex: 525, label: 'Skeleton' },
+    { defindex: 522, label: 'Stiletto' },
+    { defindex: 518, label: 'Survival' },
+    { defindex: 523, label: 'Talon' },
+    { defindex: 519, label: 'Ursus' },
+    { defindex: 526, label: 'Kukri' }
+  ], []);
 
-  // All weapon options for sidebar
-  const ALL_WEAPONS = [
-    // Rifles
-    { defindex: 7, name: 'AK-47', category: 'Rifles' },
-    { defindex: 16, name: 'M4A4', category: 'Rifles' },
-    { defindex: 60, name: 'M4A1-S', category: 'Rifles' },
-    { defindex: 9, name: 'AWP', category: 'Snipers' },
-    { defindex: 40, name: 'SSG 08 (Scout)', category: 'Snipers' },
-    { defindex: 13, name: 'Galil AR', category: 'Rifles' },
-    { defindex: 10, name: 'FAMAS', category: 'Rifles' },
-    { defindex: 8, name: 'AUG', category: 'Rifles' },
-    { defindex: 39, name: 'SG 553', category: 'Rifles' },
-    { defindex: 38, name: 'SCAR-20', category: 'Snipers' },
-    { defindex: 11, name: 'G3SG1', category: 'Snipers' },
-    // Pistols
-    { defindex: 1, name: 'Desert Eagle', category: 'Pistolas' },
-    { defindex: 61, name: 'USP-S', category: 'Pistolas' },
-    { defindex: 4, name: 'Glock-18', category: 'Pistolas' },
-    { defindex: 36, name: 'P250', category: 'Pistolas' },
-    { defindex: 3, name: 'Five-SeveN', category: 'Pistolas' },
-    { defindex: 30, name: 'Tec-9', category: 'Pistolas' },
-    { defindex: 63, name: 'CZ75-Auto', category: 'Pistolas' },
-    { defindex: 2, name: 'Dual Berettas', category: 'Pistolas' },
-    { defindex: 64, name: 'R8 Revolver', category: 'Pistolas' },
-    { defindex: 32, name: 'P2000', category: 'Pistolas' },
-    { defindex: 31, name: 'Zeus x27', category: 'Pistolas' },
-    // SMGs
-    { defindex: 17, name: 'MAC-10', category: 'SMGs' },
-    { defindex: 34, name: 'MP9', category: 'SMGs' },
-    { defindex: 19, name: 'P90', category: 'SMGs' },
-    { defindex: 33, name: 'MP7', category: 'SMGs' },
-    { defindex: 23, name: 'MP5-SD', category: 'SMGs' },
-    { defindex: 24, name: 'UMP-45', category: 'SMGs' },
-    { defindex: 26, name: 'PP-Bizon', category: 'SMGs' },
-    // Heavy / Shotguns
-    { defindex: 35, name: 'Nova', category: 'Espingardas' },
-    { defindex: 25, name: 'XM1014', category: 'Espingardas' },
-    { defindex: 27, name: 'MAG-7', category: 'Espingardas' },
-    { defindex: 29, name: 'Sawed-Off', category: 'Espingardas' },
-    { defindex: 28, name: 'Negev', category: 'Metralhadoras' },
-    { defindex: 14, name: 'M249', category: 'Metralhadoras' }
-  ];
+  // List of all Glove Types
+  const GLOVE_TYPES = useMemo(() => [
+    { type: 'Sport Gloves', label: 'Sport Gloves' },
+    { type: 'Driver Gloves', label: 'Driver Gloves' },
+    { type: 'Specialist Gloves', label: 'Specialist Gloves' },
+    { type: 'Moto Gloves', label: 'Moto Gloves' },
+    { type: 'Hand Wraps', label: 'Hand Wraps' },
+    { type: 'Bloodhound Gloves', label: 'Bloodhound' },
+    { type: 'Hydra Gloves', label: 'Hydra' },
+    { type: 'Broken Fang Gloves', label: 'Broken Fang' }
+  ], []);
+
+  // List of all Weapons
+  const WEAPON_OPTIONS = useMemo(() => [
+    { defindex: 7, label: 'AK-47' },
+    { defindex: 16, label: 'M4A4' },
+    { defindex: 60, label: 'M4A1-S' },
+    { defindex: 9, label: 'AWP' },
+    { defindex: 1, label: 'Desert Eagle' },
+    { defindex: 61, label: 'USP-S' },
+    { defindex: 4, label: 'Glock-18' },
+    { defindex: 40, label: 'SSG 08' },
+    { defindex: 13, label: 'Galil AR' },
+    { defindex: 10, label: 'FAMAS' },
+    { defindex: 8, label: 'AUG' },
+    { defindex: 39, label: 'SG 553' },
+    { defindex: 38, label: 'SCAR-20' },
+    { defindex: 11, label: 'G3SG1' },
+    { defindex: 36, label: 'P250' },
+    { defindex: 3, label: 'Five-SeveN' },
+    { defindex: 30, label: 'Tec-9' },
+    { defindex: 63, label: 'CZ75-Auto' },
+    { defindex: 2, label: 'Dual Berettas' },
+    { defindex: 64, label: 'R8 Revolver' },
+    { defindex: 32, label: 'P2000' },
+    { defindex: 17, label: 'MAC-10' },
+    { defindex: 34, label: 'MP9' },
+    { defindex: 19, label: 'P90' },
+    { defindex: 33, label: 'MP7' },
+    { defindex: 23, label: 'MP5-SD' },
+    { defindex: 24, label: 'UMP-45' },
+    { defindex: 26, label: 'PP-Bizon' },
+    { defindex: 35, label: 'Nova' },
+    { defindex: 25, label: 'XM1014' },
+    { defindex: 27, label: 'MAG-7' },
+    { defindex: 29, label: 'Sawed-Off' },
+    { defindex: 28, label: 'Negev' },
+    { defindex: 14, label: 'M249' }
+  ], []);
 
   const toggleRarity = (rarityId) => {
     setSelectedRarities(prev => 
@@ -110,23 +127,46 @@ export default function AddItemView({
     );
   };
 
-  const toggleWeaponDefindex = (defindex) => {
-    setSelectedWeaponDefindexes(prev => 
-      prev.includes(defindex) ? prev.filter(d => d !== defindex) : [...prev, defindex]
-    );
+  // Reset filters when switching main subtab
+  const handleTabChange = (newTab) => {
+    setSelectedSubTab(newTab);
+    setSelectedWeaponDefindex(null);
+    setSelectedKnifeDefindex(null);
+    setSelectedGloveType(null);
+    setSelectedAgentTeam(null);
+    setSelectedRarities([]);
   };
 
   // Filter items based on active tab and sidebar filters
   const filteredList = useMemo(() => {
     let source = [];
+
+    // 1. Skins Tab (Regular Weapons)
     if (selectedSubTab === 'skins') {
+      const knifeDefindexes = new Set(KNIFE_TYPES.map(k => k.defindex));
       source = skins.filter(s => {
-        return !s.weapon_name?.startsWith('gloves_') && !s.weapon_name?.startsWith('weapon_knife') && !s.weapon_name?.startsWith('weapon_bayonet');
+        const def = Number(s.weapon_defindex);
+        return !knifeDefindexes.has(def) && !s.weapon_name?.startsWith('gloves_') && !s.weapon_name?.startsWith('weapon_knife');
       });
-    } else if (selectedSubTab === 'knives') {
-      const knifeDefindexes = new Set(knives.map(k => Number(k.defindex)));
-      source = skins.filter(s => knifeDefindexes.has(Number(s.weapon_defindex)));
-    } else if (selectedSubTab === 'gloves') {
+
+      if (selectedWeaponDefindex) {
+        source = source.filter(s => Number(s.weapon_defindex) === Number(selectedWeaponDefindex));
+      }
+    } 
+    // 2. Knives Tab
+    else if (selectedSubTab === 'knives') {
+      const knifeDefindexes = new Set(KNIFE_TYPES.map(k => k.defindex));
+      source = skins.filter(s => {
+        const def = Number(s.weapon_defindex);
+        return knifeDefindexes.has(def) || s.weapon_name?.startsWith('weapon_knife') || s.weapon_name?.startsWith('weapon_bayonet');
+      });
+
+      if (selectedKnifeDefindex) {
+        source = source.filter(s => Number(s.weapon_defindex) === Number(selectedKnifeDefindex));
+      }
+    } 
+    // 3. Gloves Tab
+    else if (selectedSubTab === 'gloves') {
       source = gloves.map(g => ({
         weapon_defindex: g.weapon_defindex,
         weapon_name: `gloves_${g.weapon_defindex}`,
@@ -134,11 +174,18 @@ export default function AddItemView({
         paint_name: g.paint_name || g.name,
         name: g.name,
         image: g.image,
+        glove_type: g.glove_type,
         rarity_name: '★ Extraordinary',
         rarity_color: '#ffd700',
         isGlove: true
       }));
-    } else if (selectedSubTab === 'agents') {
+
+      if (selectedGloveType) {
+        source = source.filter(g => g.glove_type?.toLowerCase().includes(selectedGloveType.toLowerCase()) || g.name?.toLowerCase().includes(selectedGloveType.toLowerCase()));
+      }
+    } 
+    // 4. Agents Tab
+    else if (selectedSubTab === 'agents') {
       source = agents.map(a => ({
         agent_id: a.agent_id,
         name: a.name,
@@ -149,7 +196,13 @@ export default function AddItemView({
         isAgent: true,
         team: a.team
       }));
-    } else if (selectedSubTab === 'music') {
+
+      if (selectedAgentTeam) {
+        source = source.filter(a => a.team === selectedAgentTeam);
+      }
+    } 
+    // 5. Music Kits Tab
+    else if (selectedSubTab === 'music') {
       source = music.map(m => ({
         music_id: m.music_id,
         name: m.name,
@@ -175,16 +228,9 @@ export default function AddItemView({
         if (!matchesRarity) return false;
       }
 
-      // 3. Individual Weapon Filter
-      if (selectedSubTab === 'skins' && selectedWeaponDefindexes.length > 0) {
-        if (!selectedWeaponDefindexes.includes(Number(item.weapon_defindex))) {
-          return false;
-        }
-      }
-
       return true;
     });
-  }, [selectedSubTab, skins, gloves, knives, agents, music, search, selectedRarities, selectedWeaponDefindexes]);
+  }, [selectedSubTab, skins, gloves, agents, music, search, selectedRarities, selectedWeaponDefindex, selectedKnifeDefindex, selectedGloveType, selectedAgentTeam, KNIFE_TYPES]);
 
   return (
     <div className="min-h-screen bg-[#000000] text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
@@ -199,11 +245,11 @@ export default function AddItemView({
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className="text-sm font-bold text-white leading-tight">
+            <h2 className="text-sm font-bold text-white leading-tight font-display tracking-wide">
               Criar Item
             </h2>
             <p className="text-[11px] text-gray-400">
-              Passo 1 de 2 &bull; escolha a skin ou arma
+              Passo 1 de 2 &bull; escolha a base
             </p>
           </div>
         </div>
@@ -218,12 +264,12 @@ export default function AddItemView({
       </header>
 
       {/* Sub-navigation Categories Tabs */}
-      <div className="border-b border-[#141414] bg-[#050505] px-6 py-2">
+      <div className="border-b border-[#141414] bg-[#040404] px-6 py-2">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
           {[
-            { id: 'skins', label: 'Skins de Armas' },
-            { id: 'facas', label: 'Facas', target: 'knives' },
+            { id: 'skins', label: 'Skins' },
             { id: 'luvas', label: 'Luvas', target: 'gloves' },
+            { id: 'facas', label: 'Facas', target: 'knives' },
             { id: 'agentes', label: 'Agentes', target: 'agents' },
             { id: 'musica', label: 'Kit de música', target: 'music' }
           ].map(tab => {
@@ -233,13 +279,10 @@ export default function AddItemView({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => {
-                  setSelectedSubTab(activeId);
-                  setSelectedWeaponDefindexes([]);
-                }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                onClick={() => handleTabChange(activeId)}
+                className={`px-4 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
-                    ? 'bg-[#ff2020] text-white shadow-[0_0_12px_rgba(255,32,32,0.4)]'
+                    ? 'bg-[#ff2020] text-white shadow-[0_0_15px_rgba(255,32,32,0.5)] scale-[1.02]'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -250,81 +293,53 @@ export default function AddItemView({
         </div>
       </div>
 
-      {/* Search Bar & Quick Weapon Pills */}
-      <div className="px-6 py-3 border-b border-[#141414] bg-[#000000] flex flex-col gap-2.5">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:max-w-md">
-            <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por nome da skin ou arma..."
-              className="w-full bg-[#0a0a0a] border border-[#1a1a1a] pl-9 pr-4 py-1.5 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
-            />
-          </div>
-
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end text-xs">
-            <div className="flex items-center bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-0.5">
-              <button
-                type="button"
-                onClick={() => setGridMode('large')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                  gridMode === 'large' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                Grande
-              </button>
-              <button
-                type="button"
-                onClick={() => setGridMode('compact')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                  gridMode === 'compact' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                Compacto
-              </button>
-            </div>
-
-            <span className="text-gray-400 font-medium">
-              <strong className="text-white font-bold">{filteredList.length.toLocaleString('pt-BR')}</strong> itens
-            </span>
-          </div>
+      {/* Search Bar & Grid Controls */}
+      <div className="px-6 py-3 border-b border-[#141414] bg-[#000000] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="relative w-full sm:max-w-md">
+          <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={`Buscar em ${selectedSubTab === 'knives' ? 'facas' : selectedSubTab === 'gloves' ? 'luvas' : 'skins'}...`}
+            className="w-full bg-[#0a0a0a] border border-[#1a1a1a] pl-9 pr-4 py-1.5 rounded-lg text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
+          />
         </div>
 
-        {/* Quick Weapon Filter Pills in Vivid Red */}
-        {selectedSubTab === 'skins' && (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider shrink-0 mr-1">
-              Filtro Rápido:
-            </span>
-            {POPULAR_WEAPONS.map(pw => {
-              const isSelected = selectedWeaponDefindexes.includes(pw.defindex);
-              return (
-                <button
-                  key={pw.defindex}
-                  type="button"
-                  onClick={() => toggleWeaponDefindex(pw.defindex)}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    isSelected
-                      ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
-                      : 'bg-[#0d0d0d] text-gray-400 border border-[#1a1a1a] hover:text-white hover:border-gray-500'
-                  }`}
-                >
-                  {pw.name}
-                </button>
-              );
-            })}
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end text-xs">
+          <div className="flex items-center bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-0.5">
+            <button
+              type="button"
+              onClick={() => setGridMode('large')}
+              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
+                gridMode === 'large' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Grande
+            </button>
+            <button
+              type="button"
+              onClick={() => setGridMode('compact')}
+              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
+                gridMode === 'compact' ? 'bg-[#ff2020] text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Compacto
+            </button>
           </div>
-        )}
+
+          <span className="text-gray-400 font-medium">
+            <strong className="text-white font-bold">{filteredList.length.toLocaleString('pt-BR')}</strong> itens
+          </span>
+        </div>
       </div>
 
-      {/* Main Body: Skin Grid + Right Filter Sidebar */}
+      {/* Main Body: Items Grid + Right Filter Sidebar */}
       <div className="flex-1 flex overflow-hidden">
-        {/* CENTER / LEFT: Skins Grid */}
+        {/* CENTER / LEFT: Items Grid */}
         <div className="flex-1 p-5 overflow-y-auto bg-[#000000]">
           {filteredList.length === 0 ? (
-            <div className="text-center py-20 text-gray-500 text-xs">
+            <div className="text-center py-24 text-gray-500 text-xs">
               Nenhum item encontrado com os filtros selecionados.
             </div>
           ) : (
@@ -337,11 +352,11 @@ export default function AddItemView({
                 const parts = (item.paint_name || item.name || '').split('|');
                 const weaponTitle = parts[0]?.trim() || item.name;
                 const skinTitle = parts[1]?.trim() || '';
-                const rarityColor = item.rarity_color || '#d32ce6';
+                const rarityColor = item.rarity_color || '#ffd700';
 
                 return (
                   <div
-                    key={`${item.weapon_defindex}_${item.paint || index}`}
+                    key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || index}`}
                     onClick={() => onSelectSkin(item)}
                     className="group bg-[#090909] hover:bg-[#111111] border border-[#161616] hover:border-[#ff2020]/70 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 relative overflow-hidden"
                     style={{
@@ -377,25 +392,128 @@ export default function AddItemView({
           )}
         </div>
 
-        {/* RIGHT: Filter Sidebar */}
+        {/* RIGHT: Filter Sidebar matching Firegames exactly */}
         <aside className="w-64 bg-[#060606] border-l border-[#141414] p-4 flex flex-col justify-between overflow-y-auto shrink-0 select-none">
           <div className="space-y-5">
             <div className="flex items-center justify-between pb-2.5 border-b border-[#181818]">
-              <span className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
+              <span className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider font-display">
                 <SlidersHorizontal size={13} className="text-[#ff2020]" /> Filtros
               </span>
-              {(selectedRarities.length > 0 || selectedWeaponDefindexes.length > 0 || search) && (
+              {(selectedRarities.length > 0 || selectedWeaponDefindex || selectedKnifeDefindex || selectedGloveType || selectedAgentTeam || search) && (
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedRarities([]);
-                    setSelectedWeaponDefindexes([]);
+                    setSelectedWeaponDefindex(null);
+                    setSelectedKnifeDefindex(null);
+                    setSelectedGloveType(null);
+                    setSelectedAgentTeam(null);
                     setSearch('');
                   }}
                   className="text-[11px] text-[#ff2020] hover:underline cursor-pointer"
                 >
                   Limpar
                 </button>
+              )}
+            </div>
+
+            {/* DYNAMIC SECTION: FACAS / ARMAS / LUVAS / AGENTES PILLS */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsTypeSectionOpen(!isTypeSectionOpen)}
+                className="w-full flex items-center justify-between text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2.5 cursor-pointer"
+              >
+                <span>
+                  {selectedSubTab === 'knives' ? 'Facas' :
+                   selectedSubTab === 'gloves' ? 'Luvas' :
+                   selectedSubTab === 'agents' ? 'Agentes' :
+                   selectedSubTab === 'music' ? 'Músicas' : 'Armas'}
+                </span>
+                {isTypeSectionOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              </button>
+
+              {isTypeSectionOpen && (
+                <div className="flex flex-wrap gap-1.5 max-h-80 overflow-y-auto pr-1">
+                  {/* 1. KNIFE PILLS */}
+                  {selectedSubTab === 'knives' && KNIFE_TYPES.map(k => {
+                    const isSelected = Number(selectedKnifeDefindex) === Number(k.defindex);
+                    return (
+                      <button
+                        key={k.defindex}
+                        type="button"
+                        onClick={() => setSelectedKnifeDefindex(isSelected ? null : k.defindex)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
+                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                        }`}
+                      >
+                        {k.label}
+                      </button>
+                    );
+                  })}
+
+                  {/* 2. WEAPON PILLS */}
+                  {selectedSubTab === 'skins' && WEAPON_OPTIONS.map(w => {
+                    const isSelected = Number(selectedWeaponDefindex) === Number(w.defindex);
+                    return (
+                      <button
+                        key={w.defindex}
+                        type="button"
+                        onClick={() => setSelectedWeaponDefindex(isSelected ? null : w.defindex)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
+                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                        }`}
+                      >
+                        {w.label}
+                      </button>
+                    );
+                  })}
+
+                  {/* 3. GLOVE PILLS */}
+                  {selectedSubTab === 'gloves' && GLOVE_TYPES.map(g => {
+                    const isSelected = selectedGloveType === g.type;
+                    return (
+                      <button
+                        key={g.type}
+                        type="button"
+                        onClick={() => setSelectedGloveType(isSelected ? null : g.type)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
+                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                        }`}
+                      >
+                        {g.label}
+                      </button>
+                    );
+                  })}
+
+                  {/* 4. AGENT PILLS */}
+                  {selectedSubTab === 'agents' && [
+                    { team: 't', label: 'Terroristas (TR)' },
+                    { team: 'ct', label: 'Contra-Terroristas (CT)' }
+                  ].map(a => {
+                    const isSelected = selectedAgentTeam === a.team;
+                    return (
+                      <button
+                        key={a.team}
+                        type="button"
+                        onClick={() => setSelectedAgentTeam(isSelected ? null : a.team)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
+                            : 'bg-[#0e0e0e] text-gray-300 border border-[#1e1e1e] hover:text-white hover:border-gray-500'
+                        }`}
+                      >
+                        {a.label}
+                      </button>
+                    );
+                  })}
+                </div>
               )}
             </div>
 
@@ -433,52 +551,13 @@ export default function AddItemView({
                 </div>
               )}
             </div>
-
-            {/* Armas Section */}
-            {selectedSubTab === 'skins' && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setIsWeaponsOpen(!isWeaponsOpen)}
-                  className="w-full flex items-center justify-between text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2 cursor-pointer"
-                >
-                  <span>Armas ({ALL_WEAPONS.length})</span>
-                  {isWeaponsOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-                </button>
-
-                {isWeaponsOpen && (
-                  <div className="space-y-1 max-h-72 overflow-y-auto pr-1">
-                    {ALL_WEAPONS.map(w => {
-                      const isChecked = selectedWeaponDefindexes.includes(w.defindex);
-                      return (
-                        <label
-                          key={w.defindex}
-                          onClick={() => toggleWeaponDefindex(w.defindex)}
-                          className="flex items-center justify-between text-xs text-gray-300 hover:text-white cursor-pointer py-0.5 px-1 rounded hover:bg-white/5 transition-all"
-                        >
-                          <div className="flex items-center gap-2 truncate">
-                            <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all ${
-                              isChecked ? 'bg-[#ff2020] border-[#ff2020]' : 'border-[#242424] bg-[#0c0c0c]'
-                            }`}>
-                              {isChecked && <Check size={10} className="text-white" strokeWidth={3} />}
-                            </div>
-                            <span className="truncate">{w.name}</span>
-                          </div>
-                          <span className="text-[9px] text-gray-500 uppercase">{w.category}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Bottom Action Button in Vivid Red */}
           <div className="pt-3 mt-4 border-t border-[#181818]">
             <button
               type="button"
-              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-bold py-2 px-3 rounded-lg text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer"
+              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-bold py-2 px-3 rounded-lg text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider"
             >
               Ver {filteredList.length.toLocaleString('pt-BR')} resultados
             </button>
