@@ -1,8 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Font-Face: Reversal (Typodermic Fonts) */
+@font-face {
+  font-family: 'Reversal';
+  src: url('/fonts/reversal-bold.otf') format('opentype'),
+       url('/fonts/Reversal Bd.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reversal';
+  src: url('/fonts/reversal-bold-italic.otf') format('opentype'),
+       url('/fonts/Reversal Bd It.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reversal';
+  src: url('/fonts/reversal-bold.otf') format('opentype'),
+       url('/fonts/Reversal Bd.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reversal';
+  src: url('/fonts/reversal-bold.otf') format('opentype'),
+       url('/fonts/Reversal Bd.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reversal';
+  src: url('/fonts/reversal-bold.otf') format('opentype'),
+       url('/fonts/Reversal Bd.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg-dark: #000000;
@@ -33,8 +77,8 @@
   --text-muted: #999999;
   --text-dim: #666666;
   
-  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Rajdhani', 'Orbitron', sans-serif;
+  --font-main: 'Reversal', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Reversal', 'Orbitron', 'Rajdhani', sans-serif;
 }
 
 * {
@@ -53,9 +97,10 @@ html, body {
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
   color: #ffffff;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   min-height: 100vh;
   overflow-x: hidden;
+  letter-spacing: 0.02em;
 }
 
 /* Custom Scrollbar */

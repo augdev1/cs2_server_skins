@@ -24,8 +24,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Rajdhani', 'sans-serif'],
+        sans: ['Reversal', 'Inter', 'sans-serif'],
+        display: ['Reversal', 'sans-serif'],
       },
       boxShadow: {
         redGlow: '0 0 20px rgba(255, 32, 32, 0.4)',
