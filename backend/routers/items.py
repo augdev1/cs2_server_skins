@@ -5,14 +5,20 @@ from fastapi import APIRouter, Query, HTTPException
 
 router = APIRouter(prefix="/api/items", tags=["Catálogo de Itens"])
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
-
 def load_json_file(filename: str) -> Any:
-    path = os.path.join(DATA_DIR, filename)
-    if not os.path.exists(path):
-        return []
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    possible_paths = [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", filename),
+        os.path.join(os.getcwd(), "data", filename),
+        os.path.join(os.getcwd(), "backend", "data", filename),
+        os.path.join("/app", "data", filename),
+        os.path.join(os.path.dirname(__file__), "..", "data", filename)
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    print(f" [AVISO] Arquivo {filename} não encontrado nos caminhos testados.")
+    return []
 
 # Carrega os dados em memória no startup
 weapons_data = load_json_file("weapons.json")
@@ -21,6 +27,7 @@ gloves_data = load_json_file("gloves.json")
 agents_data = load_json_file("agents.json")
 music_data = load_json_file("music.json")
 skins_data = load_json_file("skins.json")
+
 
 CATEGORIES = [
     {"id": "rifles", "name": "Rifles", "icon": "rifle"},

@@ -17,14 +17,15 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configuração de CORS para permitir acesso de qualquer frontend (React, Vue, HTML/JS)
+# Configuração de CORS para permitir acesso de qualquer frontend (Vercel, Localhost, etc.)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Registro dos Routers
 app.include_router(auth_router)
