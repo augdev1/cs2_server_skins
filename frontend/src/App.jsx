@@ -25,9 +25,19 @@ export default function App() {
   const [skinsMap, setSkinsMap] = useState({});
 
   // Player Loadout
-  const [equipment, setEquipment] = useState({
-    t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
-    ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
+  const [equipment, setEquipment] = useState(() => {
+    try {
+      const cached = localStorage.getItem('cs2_equipment_cache');
+      return cached ? JSON.parse(cached) : {
+        t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
+        ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
+      };
+    } catch {
+      return {
+        t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
+        ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
+      };
+    }
   });
 
   // Modal Customizer State
@@ -109,7 +119,10 @@ export default function App() {
     if (!user) return;
     try {
       const data = await playerService.getEquipment();
-      setEquipment(data);
+      if (data && (data.t || data.ct)) {
+        setEquipment(data);
+        localStorage.setItem('cs2_equipment_cache', JSON.stringify(data));
+      }
     } catch (err) {
       console.error('Erro ao buscar inventário do jogador:', err);
     }
@@ -121,10 +134,11 @@ export default function App() {
     }
   }, [user]);
 
-  // Logout Handler: Clears session and returns to full-screen login
+  // Logout Handler
   const handleLogout = () => {
     authService.logout();
     setUser(null);
+    localStorage.removeItem('cs2_equipment_cache');
     setEquipment({
       t: { knife: null, gloves: null, agent: null, music: null, skins: {} },
       ct: { knife: null, gloves: null, agent: null, music: null, skins: {} }
@@ -150,16 +164,52 @@ export default function App() {
                        knives.find(k => k.defindex === item.weapon_defindex) ||
                        item;
 
+    const isKnife = item.weapon_name?.startsWith('weapon_knife') || 
+                    item.weapon_name?.startsWith('weapon_bayonet') || 
+                    (Number(item.weapon_defindex) >= 500 && Number(item.weapon_defindex) <= 526);
+
+    const isGlove = item.isGlove || item.weapon_name?.startsWith('gloves_') || 
+                    (Number(item.weapon_defindex) >= 5027 && Number(item.weapon_defindex) <= 5035);
+
     setInitialCustomizerPaint(item.paint);
     setCustomizingWeapon({
       ...baseWeapon,
       defindex: item.weapon_defindex,
       name: item.paint_name || item.name,
       weaponTitle: item.paint_name || item.name,
-      isKnife: item.weapon_name?.startsWith('weapon_knife') || item.weapon_name?.startsWith('weapon_bayonet'),
+      isKnife,
       knife: item.weapon_name,
-      isGlove: item.isGlove || item.weapon_name?.startsWith('gloves_')
+      isGlove
     });
+  };
+
+  // Handler de salvamento otimista imediato
+  const handleSkinEquipped = (payload) => {
+    if (payload) {
+      setEquipment(prev => {
+        const next = JSON.parse(JSON.stringify(prev || {}));
+        const tKey = (payload.weapon_team || payload.team) === 2 ? 't' : 'ct';
+        if (!next[tKey]) next[tKey] = { skins: {} };
+        if (!next[tKey].skins) next[tKey].skins = {};
+
+        if (payload.isDefault) {
+          delete next[tKey].skins[String(payload.weapon_defindex)];
+        } else {
+          next[tKey].skins[String(payload.weapon_defindex)] = payload;
+          if (payload.knife_name || payload.knife) {
+            next[tKey].knife = payload.knife_name || payload.knife;
+          }
+          if (payload.gloves_defindex) {
+            next[tKey].gloves = payload.gloves_defindex;
+          }
+        }
+        localStorage.setItem('cs2_equipment_cache', JSON.stringify(next));
+        return next;
+      });
+    }
+    // Sincroniza em background com o banco de dados
+    fetchEquipment();
+    showToast('Skin configurada e salva com sucesso!');
   };
 
   return (
@@ -190,7 +240,7 @@ export default function App() {
             currentView={currentView}
             onNavigate={(view) => setCurrentView(view)}
             user={user}
-            onOpenDevLogin={() => setIsDevLoginOpen(true)}
+            onOpenDevLogin={() => setIsDevLoginOpen(false)}
             onLogout={handleLogout}
           />
 
@@ -245,10 +295,7 @@ export default function App() {
           setCustomizingWeapon(null);
           setInitialCustomizerPaint(null);
         }}
-        onSkinEquipped={() => {
-          fetchEquipment();
-          showToast('Skin configurada e sincronizada com o servidor!');
-        }}
+        onSkinEquipped={handleSkinEquipped}
       />
 
       {/* Dev Login Modal */}
