@@ -176,7 +176,6 @@ export default function App() {
           return next;
         });
         showToast(`Agente '${item.name}' equipado com sucesso para o lado ${agentTeam === 3 ? 'CT' : 'TR'}!`);
-        // Redireciona imediatamente de volta para o inventário
         setCurrentView('inventory');
       } catch (err) {
         console.error('Erro ao equipar agente:', err);
@@ -185,7 +184,50 @@ export default function App() {
       return;
     }
 
-    // 2. Se for Kit de Música
+    // 2. Se for Luvas (Gloves) -> Equipa diretamente e salva no MySQL!
+    const isGloveItem = item.isGlove || item.weapon_name?.startsWith('gloves_') || (Number(item.weapon_defindex) >= 4725 && Number(item.weapon_defindex) <= 5035);
+    if (isGloveItem) {
+      const gloveDef = Number(item.weapon_defindex);
+      const paintId = Number(item.paint || 0);
+      try {
+        await playerService.updateGloves(team, gloveDef);
+        if (paintId > 0) {
+          await playerService.updateSkin({
+            weapon_team: team,
+            weapon_defindex: gloveDef,
+            weapon_paint_id: paintId,
+            weapon_wear: 0.0001,
+            weapon_seed: 0,
+            weapon_stattrak: 0,
+            weapon_stattrak_count: 0
+          });
+        }
+        setEquipment(prev => {
+          const next = JSON.parse(JSON.stringify(prev || {}));
+          const tKey = team === 3 ? 'ct' : 't';
+          if (!next[tKey]) next[tKey] = { skins: {} };
+          next[tKey].gloves = gloveDef;
+          if (paintId > 0) {
+            next[tKey].skins[String(gloveDef)] = {
+              weapon_team: team,
+              weapon_defindex: gloveDef,
+              weapon_paint_id: paintId,
+              weapon_wear: 0.0001
+            };
+          }
+          localStorage.setItem('cs2_equipment_cache', JSON.stringify(next));
+          return next;
+        });
+        showToast(`Luvas '${item.paint_name || item.name}' equipadas com sucesso!`);
+        setCurrentView('inventory');
+      } catch (err) {
+        console.error('Erro ao equipar luvas:', err);
+        showToast('Erro ao equipar luvas no servidor.', 'error');
+      }
+      return;
+    }
+
+    // 3. Se for Kit de Música
     if (item.isMusic || item.music_id) {
       try {
         await playerService.updateMusic(team, item.music_id);
@@ -206,27 +248,24 @@ export default function App() {
       return;
     }
     
-    // 3. Se for Faca, Luva ou Arma regular
-    const baseWeapon = weapons.find(w => w.defindex === item.weapon_defindex) || 
-                       knives.find(k => k.defindex === item.weapon_defindex) ||
+    // 4. Se for Faca ou Arma de Fogo regular
+    const baseWeapon = weapons.find(w => Number(w.defindex) === Number(item.weapon_defindex)) || 
+                       knives.find(k => Number(k.defindex) === Number(item.weapon_defindex)) ||
                        item;
 
     const isKnife = item.weapon_name?.startsWith('weapon_knife') || 
                     item.weapon_name?.startsWith('weapon_bayonet') || 
                     (Number(item.weapon_defindex) >= 500 && Number(item.weapon_defindex) <= 526);
 
-    const isGlove = item.isGlove || item.weapon_name?.startsWith('gloves_') || 
-                    (Number(item.weapon_defindex) >= 5027 && Number(item.weapon_defindex) <= 5035);
-
     setInitialCustomizerPaint(item.paint);
     setCustomizingWeapon({
       ...baseWeapon,
       defindex: item.weapon_defindex,
-      name: item.paint_name || item.name,
-      weaponTitle: item.paint_name || item.name,
+      name: item.paint_name || item.name || baseWeapon.name,
+      weaponTitle: item.paint_name || item.name || baseWeapon.name,
+      image: item.image || baseWeapon.image,
       isKnife,
-      knife: item.weapon_name,
-      isGlove
+      knife: item.weapon_name || baseWeapon.knife || baseWeapon.weapon_name
     });
   };
 
