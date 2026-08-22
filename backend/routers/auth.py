@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Request, HTTPException, Depends, status
 from fastapi.responses import RedirectResponse
 from auth import (
@@ -8,14 +9,21 @@ from auth import (
     get_current_user
 )
 from models import UserProfile, AuthTokenResponse, DevLoginRequest, ApiResponse
-from config import FRONTEND_URL
+from config import FRONTEND_URL, BASE_URL
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
 @router.get("/steam", summary="Iniciar login via Steam")
-def login_steam():
+def login_steam(request: Request):
     """Redireciona o usuário para o formulário oficial de autenticação da Steam."""
-    login_url = get_steam_login_url()
+    # Detect dynamically if deployed or localhost
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    proto = request.headers.get("x-forwarded-proto", "https" if "https" in str(request.base_url) else "http")
+    
+    current_base = f"{proto}://{host}" if host and "localhost" not in host else BASE_URL
+    callback_url = f"{current_base}/auth/steam/callback"
+    
+    login_url = get_steam_login_url(callback_url=callback_url, realm=current_base)
     return RedirectResponse(url=login_url)
 
 @router.get("/steam/callback", summary="Callback de retorno da Steam")
@@ -33,8 +41,9 @@ async def steam_callback(request: Request):
     profile = await fetch_steam_player_profile(steamid)
     token = create_access_token(profile.model_dump())
     
-    # Se houver um frontend configurado, redireciona com o token na URL
-    redirect_url = f"{FRONTEND_URL}/#token={token}"
+    # Redireciona para o frontend com o token no hash
+    target_frontend = FRONTEND_URL if (FRONTEND_URL and "localhost" not in FRONTEND_URL) else "https://frontend-eta-steel-myu91t1l92.vercel.app"
+    redirect_url = f"{target_frontend}/#token={token}"
     return RedirectResponse(url=redirect_url)
 
 @router.post("/dev-login", response_model=AuthTokenResponse, summary="Login direto para desenvolvimento/testes")

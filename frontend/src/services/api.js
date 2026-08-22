@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://cs2-server-skins.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -59,86 +59,86 @@ export const authService = {
 
 export const itemsService = {
   getCategories: async () => {
-    const res = await api.get('/api/items/categories');
+    const res = await api.get('/items/categories');
     return res.data;
   },
 
   getWeapons: async (category = null) => {
-    const res = await api.get('/api/items/weapons', { params: { category } });
+    const params = category ? { category } : {};
+    const res = await api.get('/items/weapons', { params });
     return res.data;
   },
 
-  getSkins: async (params = {}) => {
-    const res = await api.get('/api/items/skins', { params });
+  getSkins: async (filters = {}) => {
+    const res = await api.get('/items/skins', { params: filters });
     return res.data;
   },
 
   getKnives: async () => {
-    const res = await api.get('/api/items/knives');
+    const res = await api.get('/items/knives');
     return res.data;
   },
 
   getGloves: async () => {
-    const res = await api.get('/api/items/gloves');
+    const res = await api.get('/items/gloves');
     return res.data;
   },
 
   getAgents: async (team = null) => {
-    const res = await api.get('/api/items/agents', { params: { team } });
+    const params = team ? { team } : {};
+    const res = await api.get('/items/agents', { params });
     return res.data;
   },
 
   getMusic: async () => {
-    const res = await api.get('/api/items/music');
+    const res = await api.get('/items/music');
     return res.data;
   },
 
-  search: async (q) => {
-    const res = await api.get('/api/items/search', { params: { q } });
+  getRarities: async () => {
+    const res = await api.get('/items/rarities');
     return res.data;
   }
 };
 
 export const playerService = {
   getEquipment: async () => {
-    const res = await api.get('/api/player/equipment');
+    const res = await api.get('/player/equipment');
     return res.data;
   },
 
   updateSkin: async (skinData) => {
-    const res = await api.post('/api/player/skin', skinData);
+    const res = await api.post('/player/skin', skinData);
     return res.data;
   },
 
-  deleteSkin: async (weapon_team, weapon_defindex) => {
-    const res = await api.delete('/api/player/skin', { data: { weapon_team, weapon_defindex } });
+  deleteSkin: async (team, defindex) => {
+    const res = await api.delete(`/player/skin/${team}/${defindex}`);
     return res.data;
   },
 
-  updateKnife: async (weapon_team, knife) => {
-    const res = await api.post('/api/player/knife', { weapon_team, knife });
+  updateKnife: async (team, knifeName) => {
+    const res = await api.post('/player/knife', { team, knife_name: knifeName });
     return res.data;
   },
 
-  deleteKnife: async (team) => {
-    const res = await api.delete('/api/player/knife', { params: { team } });
+  updateGloves: async (team, glovesDefindex) => {
+    const res = await api.post('/player/gloves', { team, gloves_defindex: glovesDefindex });
     return res.data;
   },
 
-  updateGloves: async (weapon_team, weapon_defindex) => {
-    const res = await api.post('/api/player/gloves', { weapon_team, weapon_defindex });
+  updateAgent: async (team, agentModel) => {
+    const res = await api.post('/player/agent', { team, agent_model: agentModel });
     return res.data;
   },
 
-  updateAgent: async (agent_ct, agent_t) => {
-    const res = await api.post('/api/player/agent', { agent_ct, agent_t });
+  updateMusic: async (team, musicId) => {
+    const res = await api.post('/player/music', { team, music_id: musicId });
     return res.data;
   },
 
-  updateMusic: async (weapon_team, music_id) => {
-    const res = await api.post('/api/player/music', { weapon_team, music_id });
+  clearAllEquipment: async () => {
+    const res = await api.post('/player/clear-all');
     return res.data;
   }
 };
-
-export default api;

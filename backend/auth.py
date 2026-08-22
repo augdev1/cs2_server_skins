@@ -13,14 +13,15 @@ security = HTTPBearer(auto_error=False)
 
 STEAM_OPENID_URL = "https://steamcommunity.com/openid/login"
 
-def get_steam_login_url(return_url: Optional[str] = None) -> str:
+def get_steam_login_url(callback_url: Optional[str] = None, realm: Optional[str] = None) -> str:
     """Gera a URL de redirecionamento para login seguro via Steam OpenID."""
-    callback_url = return_url or f"{BASE_URL}/auth/steam/callback"
+    cb_url = callback_url or f"{BASE_URL}/auth/steam/callback"
+    realm_url = realm or BASE_URL
     params = {
         "openid.ns": "http://specs.openid.net/auth/2.0",
         "openid.mode": "checkid_setup",
-        "openid.return_to": callback_url,
-        "openid.realm": BASE_URL,
+        "openid.return_to": cb_url,
+        "openid.realm": realm_url,
         "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
         "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
     }
@@ -52,7 +53,7 @@ async def fetch_steam_player_profile(steamid: str) -> UserProfile:
         
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={STEAM_API_KEY}&steamids={steamid}"
     try:
-        async with httpx.AsyncClient(timeout=6.0) as client:
+        async with httpx.AsyncClient(timeout=8.0) as client:
             res = await client.get(url)
             if res.status_code == 200:
                 data = res.json()
@@ -101,12 +102,5 @@ async def get_current_user(auth: Optional[HTTPAuthorizationCredentials] = Securi
             detail="Token inválido ou expirado.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    return UserProfile(
-        steamid=payload.get("steamid"),
-        personaname=payload.get("personaname", "Player"),
-        avatar=payload.get("avatar", ""),
-        avatarmedium=payload.get("avatarmedium", ""),
-        avatarfull=payload.get("avatarfull", ""),
-        profileurl=payload.get("profileurl", "")
-    )
+        
+    return UserProfile(**payload)
