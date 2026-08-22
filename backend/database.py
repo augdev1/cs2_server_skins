@@ -1,6 +1,6 @@
 import pymysql
 from contextlib import contextmanager
-from typing import Generator
+from typing import Generator, Optional
 from config import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 
 DB_CONFIG = {
@@ -15,12 +15,17 @@ DB_CONFIG = {
 }
 
 @contextmanager
-def get_db_cursor() -> Generator[pymysql.cursors.DictCursor, None, None]:
-    """Context manager para obter conexão e cursor MySQL."""
+def get_db_cursor(commit: bool = True) -> Generator[pymysql.cursors.DictCursor, None, None]:
+    """Context manager para obter conexão e cursor MySQL com suporte a commit automático."""
     conn = pymysql.connect(**DB_CONFIG)
     try:
         with conn.cursor() as cursor:
             yield cursor
+        if commit:
+            conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
