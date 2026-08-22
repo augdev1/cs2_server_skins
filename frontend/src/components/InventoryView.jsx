@@ -79,9 +79,11 @@ export default function InventoryView({
     });
   }
 
-  // 3. Equipped Agent
-  const equippedAgentName = currentTeamEquipment.agent;
-  const agentItem = agents.find(a => a.name === equippedAgentName || a.agent_id === equippedAgentName || (team === 2 ? a.team === 't' : a.team === 'ct'));
+  // 3. Equipped Agent (Matches by exact CS2 model string, name or team)
+  const equippedAgentModel = currentTeamEquipment.agent;
+  const agentItem = agents.find(a => a.model === equippedAgentModel) || 
+                    agents.find(a => a.name === equippedAgentModel) || 
+                    agents.find(a => a.team === (team === 2 ? 't' : 'ct'));
   if (agentItem) {
     inventoryItems.push({
       id: `agent_${agentItem.agent_id || 'default'}`,
@@ -94,7 +96,7 @@ export default function InventoryView({
       rarityColor: '#d32ce6',
       itemObj: agentItem,
       isAgent: true,
-      hasCustom: !!equippedAgentName
+      hasCustom: !!equippedAgentModel
     });
   }
 
@@ -171,7 +173,7 @@ export default function InventoryView({
         <div className="flex items-center flex-wrap gap-2">
           <button
             type="button"
-            onClick={onOpenAdd}
+            onClick={() => onOpenAdd('skins')}
             className="flex items-center gap-2 bg-[#ff2020] hover:bg-[#e01515] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95 font-display tracking-wider"
           >
             <Plus size={16} strokeWidth={3} />
@@ -236,8 +238,10 @@ export default function InventoryView({
           <div
             key={item.id}
             onClick={() => {
-              if (item.isAgent || item.isMusic) {
-                onOpenAdd();
+              if (item.isAgent) {
+                onOpenAdd('agents');
+              } else if (item.isMusic) {
+                onOpenAdd('music');
               } else {
                 onCustomizeWeapon(item.itemObj);
               }
