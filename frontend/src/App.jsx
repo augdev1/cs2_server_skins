@@ -275,6 +275,7 @@ export default function App() {
             gloves={gloves}
             team={team}
             equippedGlovesDefindex={currentTeamEquipment.gloves}
+            equippedSkins={currentTeamEquipment.skins}
             onGlovesChanged={(defindex) => {
               fetchEquipment();
               showToast('Luvas equipadas com sucesso!');

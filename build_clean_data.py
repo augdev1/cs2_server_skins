@@ -200,13 +200,17 @@ def main():
         if cat.get("name") == "Gloves" or "Gloves" in item.get("name", "") or "Hand Wraps" in item.get("name", ""):
             w_obj = item.get("weapon") or {}
             w_name = w_obj.get("name", "")
-            g_def = GLOVES_MAP.get(w_name, 5030)
+            g_info = GLOVES_MAP.get(w_name, {"defindex": 5030, "name": "★ Sport Gloves"})
+            g_def = g_info["defindex"] if isinstance(g_info, dict) else int(g_info)
+            g_type_name = g_info.get("name", w_name) if isinstance(g_info, dict) else w_name
+            
             img = item.get("image")
             name = item.get("name")
             paint_idx = str(item.get("paint_index", "0"))
             
             gloves_list.append({
                 "weapon_defindex": g_def,
+                "glove_type": g_type_name,
                 "paint": paint_idx,
                 "name": name,
                 "paint_name": name,
@@ -223,6 +227,7 @@ def main():
                 "rarity_name": "★ Extraordinary",
                 "rarity_color": "#ffd700"
             })
+
 
     # 6. Build agents.json
     agents_list = []
