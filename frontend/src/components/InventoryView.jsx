@@ -80,7 +80,7 @@ export default function InventoryView({
     });
   }
 
-  // 3. Equipped Agent
+  // 3. Equipped Agent (Matches by exact CS2 model string, name or team)
   const equippedAgentModel = currentTeamEquipment.agent;
   const agentItem = agents.find(a => a.model === equippedAgentModel) || 
                     agents.find(a => a.name === equippedAgentModel) || 
@@ -120,18 +120,32 @@ export default function InventoryView({
     });
   }
 
-  // 5. Regular Weapons with equipped skins or common weapons
-  const primaryWeaponNames = [
-    'weapon_ak47', 'weapon_m4a1_silencer', 'weapon_m4a1', 'weapon_awp', 
-    'weapon_deagle', 'weapon_usp_silencer', 'weapon_glock', 'weapon_ssg08',
-    'weapon_galilar', 'weapon_famas', 'weapon_mp9', 'weapon_mac10'
+  // 5. Regular Weapons with strict team segregation (TR vs CT)
+  const currentTeamStr = team === 2 ? 't' : 'ct';
+
+  // Primary loadout weapons for each team
+  const primaryWeaponNamesTR = [
+    'weapon_ak47', 'weapon_galilar', 'weapon_glock', 'weapon_tec9',
+    'weapon_mac10', 'weapon_sg556', 'weapon_awp', 'weapon_deagle', 'weapon_ssg08'
   ];
 
+  const primaryWeaponNamesCT = [
+    'weapon_m4a1_silencer', 'weapon_m4a1', 'weapon_famas', 'weapon_aug',
+    'weapon_usp_silencer', 'weapon_mp9', 'weapon_fiveseven', 'weapon_awp', 'weapon_deagle', 'weapon_ssg08'
+  ];
+
+  const primaryWeaponNames = team === 2 ? primaryWeaponNamesTR : primaryWeaponNamesCT;
+
   weapons.forEach(w => {
+    // Strict Team Exclusion: skip weapons of the opposing team!
+    if (w.team && w.team !== 'any' && w.team !== currentTeamStr) {
+      return;
+    }
+
     const skin = equippedSkins[String(w.defindex)];
     const hasCustom = skin && Number(skin.weapon_paint_id) > 0;
     
-    // Include if weapon has custom skin, or is one of primary loadout weapons
+    // Include if weapon has custom skin, or is one of primary loadout weapons for this team
     if (hasCustom || primaryWeaponNames.includes(w.weapon_name)) {
       const skinInfo = hasCustom ? skinsMap[`${w.defindex}_${skin.weapon_paint_id}`] : null;
       inventoryItems.push({
