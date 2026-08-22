@@ -19,7 +19,10 @@ api.interceptors.request.use((config) => {
 });
 
 export const authService = {
-  getSteamLoginUrl: () => `${API_BASE}/auth/steam`,
+  getSteamLoginUrl: () => {
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+    return `${API_BASE}/auth/steam?redirect_to=${encodeURIComponent(currentOrigin)}`;
+  },
   
   devLogin: async (steamid, personaname = 'Player') => {
     const res = await api.post('/auth/dev-login', { steamid, personaname });

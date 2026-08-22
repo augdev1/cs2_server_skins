@@ -1,4 +1,6 @@
 import os
+import urllib.parse
+from typing import Optional
 from fastapi import APIRouter, Request, HTTPException, Depends, status
 from fastapi.responses import RedirectResponse
 from auth import (
@@ -14,20 +16,29 @@ from config import FRONTEND_URL, BASE_URL
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
 @router.get("/steam", summary="Iniciar login via Steam")
-def login_steam(request: Request):
+def login_steam(request: Request, redirect_to: Optional[str] = None):
     """Redireciona o usuário para o formulário oficial de autenticação da Steam."""
     # Detect dynamically if deployed or localhost
     host = request.headers.get("x-forwarded-host") or request.headers.get("host")
     proto = request.headers.get("x-forwarded-proto", "https" if "https" in str(request.base_url) else "http")
     
     current_base = f"{proto}://{host}" if host and "localhost" not in host else BASE_URL
+    
+    # Encode the client's current frontend URL into the callback so we redirect back to the exact domain
+    frontend_target = redirect_to or request.headers.get("origin") or request.headers.get("referer") or FRONTEND_URL
+    # Remove trailing hash or slash from frontend target
+    if frontend_target:
+        frontend_target = frontend_target.split('#')[0].rstrip('/')
+    
     callback_url = f"{current_base}/auth/steam/callback"
+    if frontend_target:
+        callback_url += f"?redirect_to={urllib.parse.quote(frontend_target, safe='')}"
     
     login_url = get_steam_login_url(callback_url=callback_url, realm=current_base)
     return RedirectResponse(url=login_url)
 
 @router.get("/steam/callback", summary="Callback de retorno da Steam")
-async def steam_callback(request: Request):
+async def steam_callback(request: Request, redirect_to: Optional[str] = None):
     """Processa a resposta OpenID da Steam após o usuário autorizar o login."""
     query_params = dict(request.query_params)
     steamid = await verify_steam_openid(query_params)
@@ -41,8 +52,12 @@ async def steam_callback(request: Request):
     profile = await fetch_steam_player_profile(steamid)
     token = create_access_token(profile.model_dump())
     
-    # Redireciona para o frontend com o token no hash
-    target_frontend = FRONTEND_URL if (FRONTEND_URL and "localhost" not in FRONTEND_URL) else "https://frontend-eta-steel-myu91t1l92.vercel.app"
+    # Usa o redirect_to dinâmico que o frontend enviou, evitando qualquer 404
+    target_frontend = redirect_to
+    if not target_frontend:
+        target_frontend = FRONTEND_URL if (FRONTEND_URL and "localhost" not in FRONTEND_URL) else "https://frontend-eta-steel.vercel.app"
+    
+    target_frontend = target_frontend.split('#')[0].rstrip('/')
     redirect_url = f"{target_frontend}/#token={token}"
     return RedirectResponse(url=redirect_url)
 
