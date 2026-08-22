@@ -378,6 +378,7 @@ export default function App() {
       {/* Modal Customizer */}
       <SkinCustomizerModal
         weapon={customizingWeapon}
+        knives={knives}
         team={team}
         initialPaintId={initialCustomizerPaint}
         currentSkin={customizingWeapon ? (

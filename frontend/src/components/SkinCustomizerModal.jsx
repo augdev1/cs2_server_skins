@@ -25,6 +25,7 @@ const WEAR_RANGES = [
 
 export default function SkinCustomizerModal({ 
   weapon, 
+  knives = [],
   team, 
   currentSkin, 
   initialPaintId,
@@ -32,10 +33,11 @@ export default function SkinCustomizerModal({
   onClose, 
   onSkinEquipped 
 }) {
+  const [activeWeapon, setActiveWeapon] = useState(weapon);
+  const [allKnivesList, setAllKnivesList] = useState(knives || []);
   const [skins, setSkins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [selectedRarity, setSelectedRarity] = useState('all');
   
   // Customization States
   const [selectedPaintId, setSelectedPaintId] = useState(initialPaintId || currentSkin?.weapon_paint_id || 0);
@@ -49,9 +51,21 @@ export default function SkinCustomizerModal({
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Sincroniza facas caso não tenham sido passadas por props
+  useEffect(() => {
+    if (knives && knives.length > 0) {
+      setAllKnivesList(knives);
+    } else {
+      itemsService.getKnives().then(k => {
+        if (Array.isArray(k)) setAllKnivesList(k);
+      });
+    }
+  }, [knives]);
+
+  // Inicializa a arma/faca ativa quando o modal abre
   useEffect(() => {
     if (!isOpen || !weapon) return;
-    
+    setActiveWeapon(weapon);
     setSelectedPaintId(initialPaintId || currentSkin?.weapon_paint_id || 0);
     setWear(currentSkin?.weapon_wear ?? 0.001);
     setSeed(currentSkin?.weapon_seed ?? 0);
@@ -60,16 +74,24 @@ export default function SkinCustomizerModal({
     setStattrakCount(currentSkin?.weapon_stattrak_count || 0);
     setSelectedTeam(team || 2);
     setSuccessMsg('');
-    setSelectedRarity('all');
+    setSearch('');
+  }, [isOpen, weapon, currentSkin, initialPaintId, team]);
+
+  // Carrega as skins da arma/faca ativa
+  useEffect(() => {
+    if (!isOpen || !activeWeapon) return;
 
     const fetchSkins = async () => {
       setLoading(true);
       try {
-        const data = await itemsService.getSkins({ defindex: weapon.defindex });
+        const def = activeWeapon.defindex || activeWeapon.weapon_defindex;
+        const data = await itemsService.getSkins({ defindex: def });
         const list = Array.isArray(data) ? data : [];
         setSkins(list);
         if (initialPaintId) {
           setSelectedPaintId(initialPaintId);
+        } else if (list.length > 0 && !selectedPaintId) {
+          setSelectedPaintId(list[0].paint);
         }
       } catch (err) {
         console.error('Erro ao carregar skins:', err);
@@ -78,19 +100,22 @@ export default function SkinCustomizerModal({
       }
     };
     fetchSkins();
-  }, [isOpen, weapon, currentSkin, initialPaintId, team]);
+  }, [isOpen, activeWeapon]);
 
-  if (!isOpen || !weapon) return null;
+  if (!isOpen || !activeWeapon) return null;
+
+  const isKnife = activeWeapon.isKnife || 
+                  !!activeWeapon.knife || 
+                  activeWeapon.weapon_name?.startsWith('weapon_knife') ||
+                  (Number(activeWeapon.defindex) >= 500 && Number(activeWeapon.defindex) <= 526);
 
   const filteredSkins = skins.filter(s => {
     const pName = s.paint_name || s.name || '';
-    const matchesSearch = pName.toLowerCase().includes(search.toLowerCase());
-    const matchesRarity = selectedRarity === 'all' || s.rarity_name?.toLowerCase().includes(selectedRarity.toLowerCase());
-    return matchesSearch && matchesRarity;
+    return pName.toLowerCase().includes(search.toLowerCase());
   });
 
   const selectedSkinObj = skins.find(s => Number(s.paint) === Number(selectedPaintId)) || 
-                          (weapon.image ? weapon : skins[0]);
+                          (activeWeapon.image ? activeWeapon : skins[0]);
 
   const getWearLabel = (val) => {
     const found = WEAR_RANGES.find(r => val >= r.min && val <= r.max);
@@ -99,16 +124,25 @@ export default function SkinCustomizerModal({
 
   const wearInfo = getWearLabel(wear);
 
+  // Troca de Faca no modal
+  const handleSelectKnifeType = (knifeObj) => {
+    setActiveWeapon({
+      ...knifeObj,
+      isKnife: true,
+      weaponTitle: knifeObj.name,
+      weapon_name: knifeObj.knife || knifeObj.weapon_name
+    });
+  };
+
   const handleEquipSkin = async () => {
     setSaving(true);
     setSuccessMsg('');
     try {
-      const defindex = Number(weapon.defindex || weapon.weapon_defindex);
-      const isKnife = weapon.isKnife || !!weapon.knife || (defindex >= 500 && defindex <= 526);
+      const defindex = Number(activeWeapon.defindex || activeWeapon.weapon_defindex);
 
       // 1. Se for faca, atualiza o modelo em wp_player_knife
-      if (isKnife && weapon.knife) {
-        await playerService.updateKnife(selectedTeam, weapon.knife);
+      if (isKnife && (activeWeapon.knife || activeWeapon.weapon_name)) {
+        await playerService.updateKnife(selectedTeam, activeWeapon.knife || activeWeapon.weapon_name);
       }
 
       // 2. Salva a skin/pintura em wp_player_skins
@@ -127,7 +161,7 @@ export default function SkinCustomizerModal({
         weapon_sticker_3: '0;0;0;0;0;0;0',
         weapon_sticker_4: '0;0;0;0;0;0;0',
         weapon_keychain: '0;0;0;0;0',
-        knife_name: isKnife ? (weapon.knife || weapon.weapon_name) : null
+        knife_name: isKnife ? (activeWeapon.knife || activeWeapon.weapon_name) : null
       };
 
       await playerService.updateSkin(payload);
@@ -146,9 +180,10 @@ export default function SkinCustomizerModal({
   const handleRestoreDefault = async () => {
     setSaving(true);
     try {
-      await playerService.deleteSkin(selectedTeam, weapon.defindex);
+      const defindex = Number(activeWeapon.defindex || activeWeapon.weapon_defindex);
+      await playerService.deleteSkin(selectedTeam, defindex);
       setSuccessMsg('Arma restaurada para o padrão.');
-      onSkinEquipped({ weapon_team: selectedTeam, weapon_defindex: weapon.defindex, isDefault: true });
+      onSkinEquipped({ weapon_team: selectedTeam, weapon_defindex: defindex, isDefault: true });
       setTimeout(() => {
         onClose();
       }, 500);
@@ -165,8 +200,8 @@ export default function SkinCustomizerModal({
         {/* Header */}
         <div className="px-6 py-3.5 border-b border-[#141414] bg-[#0a0a0a] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-base font-extrabold text-white font-display">
-              {weapon.name || weapon.weaponTitle}
+            <h3 className="text-base font-extrabold text-white font-display flex items-center gap-2">
+              <span>{activeWeapon.name || activeWeapon.weaponTitle}</span>
             </h3>
             
             {/* Team Toggle */}
@@ -209,9 +244,9 @@ export default function SkinCustomizerModal({
 
         {/* Modal Body */}
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-          {/* Left: Skins Grid Selector */}
+          {/* Left: Skins Grid Selector & Knife Model Switcher */}
           <div className="w-full md:w-1/2 p-5 border-r border-[#141414] flex flex-col bg-[#050505] overflow-y-auto">
-            {/* Search & Rarities Filter */}
+            {/* Search Input */}
             <div className="space-y-3 mb-4">
               <div className="relative">
                 <Search size={14} className="absolute left-3 top-2.5 text-gray-500" />
@@ -224,29 +259,34 @@ export default function SkinCustomizerModal({
                 />
               </div>
 
-              {/* Rarity Tabs */}
-              <div className="flex items-center gap-1 overflow-x-auto pb-1">
-                {[
-                  { id: 'all', label: 'Todas' },
-                  { id: 'Covert', label: '★ Covert' },
-                  { id: 'Classified', label: 'Classified' },
-                  { id: 'Restricted', label: 'Restricted' },
-                  { id: 'Mil-Spec', label: 'Mil-Spec' }
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setSelectedRarity(tab.id)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold shrink-0 transition-all cursor-pointer ${
-                      selectedRarity === tab.id
-                        ? 'bg-[#ff2020] text-white shadow-sm'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+              {/* Se for Faca: Categorias / Tipos de Facas (Karambit, Butterfly, M9, etc.) */}
+              {isKnife && allKnivesList.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                    Escolha o Modelo da Faca:
+                  </span>
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                    {allKnivesList.map(k => {
+                      const isCurrentKnife = Number(k.defindex) === Number(activeWeapon.defindex);
+                      const cleanKnifeName = k.name.replace('★', '').replace('Knife', '').trim();
+                      return (
+                        <button
+                          key={k.defindex}
+                          type="button"
+                          onClick={() => handleSelectKnifeType(k)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                            isCurrentKnife
+                              ? 'bg-[#ff2020] text-white shadow-[0_0_12px_rgba(255,32,32,0.45)] border border-[#ff2020]'
+                              : 'bg-[#0d0d0d] text-gray-300 hover:text-white hover:bg-[#181818] border border-[#1f1f1f]'
+                          }`}
+                        >
+                          <span>{cleanKnifeName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Skins Grid */}
@@ -280,7 +320,7 @@ export default function SkinCustomizerModal({
                       )}
 
                       <img
-                        src={s.image || weapon.image}
+                        src={s.image || activeWeapon.image}
                         alt={s.paint_name}
                         className="max-h-[60px] max-w-[85px] object-contain my-auto drop-shadow-md"
                         loading="lazy"
@@ -311,7 +351,7 @@ export default function SkinCustomizerModal({
               {/* Preview Card */}
               <div className="bg-[#0e0e0e] border border-[#1a1a1a] rounded-2xl p-5 flex flex-col items-center justify-center relative overflow-hidden shadow-inner min-h-[170px]">
                 <img
-                  src={selectedSkinObj?.image || weapon.image}
+                  src={selectedSkinObj?.image || activeWeapon.image}
                   alt="Preview"
                   className="max-h-[110px] max-w-[210px] object-contain drop-shadow-[0_15px_20px_rgba(0,0,0,0.9)] animate-fade-in"
                   onError={(e) => {
@@ -321,7 +361,7 @@ export default function SkinCustomizerModal({
 
                 <div className="text-center mt-3">
                   <h4 className="text-xs font-bold text-white tracking-wide">
-                    {selectedSkinObj?.paint_name || weapon.name}
+                    {selectedSkinObj?.paint_name || activeWeapon.name}
                   </h4>
                   <div className="flex items-center justify-center gap-2 mt-1">
                     <span className="text-[10px] text-gray-400 font-semibold">
