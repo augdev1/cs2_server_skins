@@ -1,0 +1,122 @@
+[
+  {
+    "defindex": 520,
+    "name": "★ Navaja Knife",
+    "knife": "weapon_knife_gypsy_jackknife",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gypsy_jackknife.png"
+  },
+  {
+    "defindex": 514,
+    "name": "★ Bowie Knife",
+    "knife": "weapon_knife_survival_bowie",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_survival_bowie.png"
+  },
+  {
+    "defindex": 508,
+    "name": "★ M9 Bayonet",
+    "knife": "weapon_knife_m9_bayonet",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_m9_bayonet.png"
+  },
+  {
+    "defindex": 523,
+    "name": "★ Talon Knife",
+    "knife": "weapon_knife_widowmaker",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_widowmaker.png"
+  },
+  {
+    "defindex": 515,
+    "name": "★ Butterfly Knife",
+    "knife": "weapon_knife_butterfly",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_butterfly.png"
+  },
+  {
+    "defindex": 507,
+    "name": "★ Karambit",
+    "knife": "weapon_knife_karambit",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png"
+  },
+  {
+    "defindex": 509,
+    "name": "★ Huntsman Knife",
+    "knife": "weapon_knife_tactical",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_tactical.png"
+  },
+  {
+    "defindex": 512,
+    "name": "★ Falchion Knife",
+    "knife": "weapon_knife_falchion",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_falchion.png"
+  },
+  {
+    "defindex": 522,
+    "name": "★ Stiletto Knife",
+    "knife": "weapon_knife_stiletto",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_stiletto.png"
+  },
+  {
+    "defindex": 525,
+    "name": "★ Skeleton Knife",
+    "knife": "weapon_knife_skeleton",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_skeleton.png"
+  },
+  {
+    "defindex": 521,
+    "name": "★ Nomad Knife",
+    "knife": "weapon_knife_outdoor",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_outdoor.png"
+  },
+  {
+    "defindex": 518,
+    "name": "★ Survival Knife",
+    "knife": "weapon_knife_canis",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_canis.png"
+  },
+  {
+    "defindex": 519,
+    "name": "★ Ursus Knife",
+    "knife": "weapon_knife_ursus",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_ursus.png"
+  },
+  {
+    "defindex": 526,
+    "name": "★ Kukri Knife",
+    "knife": "weapon_knife_kukri",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_kukri.png"
+  },
+  {
+    "defindex": 505,
+    "name": "★ Flip Knife",
+    "knife": "weapon_knife_flip",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_flip.png"
+  },
+  {
+    "defindex": 516,
+    "name": "★ Shadow Daggers",
+    "knife": "weapon_knife_push",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_push.png"
+  },
+  {
+    "defindex": 517,
+    "name": "★ Paracord Knife",
+    "knife": "weapon_knife_cord",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_cord.png"
+  },
+  {
+    "defindex": 503,
+    "name": "★ Classic Knife",
+    "knife": "weapon_knife_css",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_css.png"
+  },
+  {
+    "defindex": 506,
+    "name": "★ Gut Knife",
+    "knife": "weapon_knife_gut",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_gut.png"
+  },
+  {
+    "defindex": 500,
+    "name": "★ Bayonet",
+    "knife": "weapon_bayonet",
+    "image": "https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_bayonet.png"
+  }
+]
