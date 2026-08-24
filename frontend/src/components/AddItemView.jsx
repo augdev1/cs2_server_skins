@@ -34,6 +34,7 @@ export default function AddItemView({
   const [selectedKnifeDefindex, setSelectedKnifeDefindex] = useState(null);
   const [selectedGloveType, setSelectedGloveType] = useState(null);
   const [selectedAgentTeam, setSelectedAgentTeam] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(48);
 
   const [isTypeSectionOpen, setIsTypeSectionOpen] = useState(true);
   const [isRaritiesOpen, setIsRaritiesOpen] = useState(true);
@@ -43,6 +44,10 @@ export default function AddItemView({
       setSelectedSubTab(initialSubTab);
     }
   }, [initialSubTab]);
+
+  useEffect(() => {
+    setVisibleCount(48);
+  }, [selectedSubTab, search, selectedWeaponDefindex, selectedKnifeDefindex, selectedGloveType, selectedAgentTeam, selectedRarities]);
 
   // Rarities definition
   const RARITIES = [
@@ -263,6 +268,20 @@ export default function AddItemView({
     return item.rarity_name || 'ITEM';
   };
 
+  // Progressive sliced list for 60fps instant tab switches
+  const visibleList = useMemo(() => {
+    return filteredList.slice(0, visibleCount);
+  }, [filteredList, visibleCount]);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - 350) {
+      if (visibleCount < filteredList.length) {
+        setVisibleCount(prev => Math.min(prev + 48, filteredList.length));
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
@@ -304,7 +323,10 @@ export default function AddItemView({
       {/* Main Container */}
       <div className="flex-1 flex overflow-hidden">
         {/* Central Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 bg-transparent p-5 space-y-4 overflow-y-auto">
+        <div 
+          onScroll={handleScroll}
+          className="flex-1 flex flex-col min-w-0 bg-transparent p-3.5 sm:p-5 space-y-4 overflow-y-auto"
+        >
           {/* Top Sub-Navigation Tabs (Touch-Carousel) */}
           <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-carousel pb-2 pt-1 border-b border-white/10 snap-x">
             {[
@@ -395,61 +417,80 @@ export default function AddItemView({
               </button>
             </div>
           ) : (
-            <div className={`grid gap-3.5 ${
-              gridMode === 'large'
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
-                : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8'
-            }`}>
-              {filteredList.map((item, idx) => (
-                <div
-                  key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || idx}`}
-                  onClick={() => onSelectSkin(item)}
-                  className="group relative bg-black/35 hover:bg-black/55 backdrop-blur-sm border border-white/10 hover:border-[#ff2020] rounded-2xl p-3 flex flex-col items-center justify-between min-h-[175px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
-                >
-                  {/* Top Item Category / Model */}
-                  <div className="w-full flex items-center justify-between z-10">
-                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate max-w-[80%]">
-                      {getItemCategoryLabel(item)}
-                    </span>
-                    {item.team && (
-                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase font-display ${
-                        item.team === 't' ? 'bg-[#ff2020]/20 text-[#ff2020] border border-[#ff2020]/40' : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
-                      }`}>
-                        {item.team.toUpperCase()}
+            <div className="space-y-4">
+              <div className={`grid gap-3.5 ${
+                gridMode === 'large'
+                  ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+                  : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8'
+              }`}>
+                {visibleList.map((item, idx) => (
+                  <div
+                    key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || idx}`}
+                    onClick={() => onSelectSkin(item)}
+                    className="group relative bg-black/35 hover:bg-black/55 backdrop-blur-sm border border-white/10 hover:border-[#ff2020] rounded-2xl p-3 flex flex-col items-center justify-between min-h-[175px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
+                  >
+                    {/* Top Item Category / Model */}
+                    <div className="w-full flex items-center justify-between z-10">
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate max-w-[80%]">
+                        {getItemCategoryLabel(item)}
                       </span>
-                    )}
-                  </div>
+                      {item.team && (
+                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase font-display ${
+                          item.team === 't' ? 'bg-[#ff2020]/20 text-[#ff2020] border border-[#ff2020]/40' : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                        }`}>
+                          {item.team.toUpperCase()}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Item Image */}
-                  <div className="my-auto w-full flex items-center justify-center py-2 relative">
-                    <img
-                      src={item.image}
-                      alt={item.paint_name || item.name}
-                      className="max-h-[85px] max-w-[120px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)] group-hover:scale-110 transition-transform duration-300"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png';
-                      }}
-                    />
-                  </div>
-
-                  {/* Item Details */}
-                  <div className="w-full text-center z-10 pt-1.5 border-t border-white/10">
-                    <p className="text-xs font-bold text-white truncate group-hover:text-[#ff2020] transition-colors">
-                      {item.paint_name || item.name}
-                    </p>
-                    <div className="flex items-center justify-center gap-1.5 mt-0.5">
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full inline-block"
-                        style={{ backgroundColor: item.rarity_color || '#ff2020' }}
+                    {/* Item Image */}
+                    <div className="my-auto w-full flex items-center justify-center py-2 relative">
+                      <img
+                        src={item.image}
+                        alt={item.paint_name || item.name}
+                        className="max-h-[85px] max-w-[120px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)] group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          e.target.src = 'https://raw.githubusercontent.com/Nereziel/cs2-WeaponPaints/main/website/img/skins/weapon_knife_karambit.png';
+                        }}
                       />
-                      <span className="text-[9px] text-gray-500 truncate">
-                        {item.rarity_name}
-                      </span>
+                    </div>
+
+                    {/* Item Details */}
+                    <div className="w-full text-center z-10 pt-1.5 border-t border-white/10">
+                      <p className="text-xs font-bold text-white truncate group-hover:text-[#ff2020] transition-colors">
+                        {item.paint_name || item.name}
+                      </p>
+                      <div className="flex items-center justify-center gap-1.5 mt-0.5">
+                        <span 
+                          className="w-1.5 h-1.5 rounded-full inline-block"
+                          style={{ backgroundColor: item.rarity_color || '#ff2020' }}
+                        />
+                        <span className="text-[9px] text-gray-500 truncate">
+                          {item.rarity_name}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Progressive Load More Trigger */}
+              {visibleCount < filteredList.length && (
+                <div className="flex flex-col items-center justify-center py-6 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount(prev => Math.min(prev + 48, filteredList.length))}
+                    className="bg-black/50 hover:bg-black/75 border border-white/15 hover:border-[#ff2020] px-6 py-2.5 rounded-xl text-xs font-bold text-gray-300 hover:text-white transition-all cursor-pointer shadow-lg active:scale-95"
+                  >
+                    Carregar Mais (+48 itens)
+                  </button>
+                  <span className="text-[10px] text-gray-500 font-mono">
+                    Exibindo {visibleList.length} de {filteredList.length} itens
+                  </span>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
