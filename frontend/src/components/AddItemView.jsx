@@ -237,6 +237,32 @@ export default function AddItemView({
     });
   }, [selectedSubTab, skins, gloves, agents, music, search, selectedRarities, selectedWeaponDefindex, selectedKnifeDefindex, selectedGloveType, selectedAgentTeam, KNIFE_TYPES]);
 
+  // Função para exibir nomes limpos e oficiais (sem identificadores brutos como gloves_5034)
+  const getItemCategoryLabel = (item) => {
+    if (item.isGlove || item.glove_type) {
+      return (item.glove_type || item.name?.split('|')[0] || 'LUVAS').trim().toUpperCase();
+    }
+    if (item.isAgent) {
+      return '★ AGENTE';
+    }
+    if (item.isMusic) {
+      return 'KIT DE MÚSICA';
+    }
+    if (item.weapon_name) {
+      if (item.weapon_name.startsWith('gloves_')) {
+        return (item.glove_type || item.name?.split('|')[0] || 'LUVAS').trim().toUpperCase();
+      }
+      return item.weapon_name
+        .replace('weapon_knife_', '★ ')
+        .replace('weapon_bayonet', '★ BAYONET')
+        .replace('weapon_', '')
+        .replace('knife_', '★ ')
+        .replace('_', ' ')
+        .toUpperCase();
+    }
+    return item.rarity_name || 'ITEM';
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
@@ -383,7 +409,7 @@ export default function AddItemView({
                   {/* Top Item Category / Model */}
                   <div className="w-full flex items-center justify-between z-10">
                     <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate max-w-[80%]">
-                      {item.weapon_name?.replace('weapon_', '').replace('knife_', '').toUpperCase() || item.rarity_name}
+                      {getItemCategoryLabel(item)}
                     </span>
                     {item.team && (
                       <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase font-display ${
