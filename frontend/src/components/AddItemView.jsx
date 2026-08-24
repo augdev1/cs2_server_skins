@@ -266,8 +266,8 @@ export default function AddItemView({
   return (
     <div className="min-h-screen bg-transparent text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
-      <header className="border-b border-white/10 bg-black/50 backdrop-blur-md px-6 py-3 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3 min-w-[180px]">
+      <header className="border-b border-white/10 bg-black/50 backdrop-blur-md px-3 sm:px-6 py-3 flex items-center justify-between gap-2 sticky top-0 z-30">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
           <button
             type="button"
             onClick={onBack}
@@ -276,25 +276,25 @@ export default function AddItemView({
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className="text-sm font-bold text-white leading-tight font-display tracking-wide">
+            <h2 className="text-xs sm:text-sm font-bold text-white leading-tight font-display tracking-wide">
               Criar Item
             </h2>
-            <p className="text-[11px] text-gray-500 font-semibold">
+            <p className="text-[10px] sm:text-[11px] text-gray-500 font-semibold hidden sm:block">
               Passo 1 de 2 • escolha a base
             </p>
           </div>
         </div>
 
         {/* Centered Server IP Connect Button */}
-        <div className="flex-1 flex justify-center px-4">
+        <div className="flex-1 flex justify-center px-1 sm:px-4 min-w-0">
           <ServerConnectButton variant="compact" />
         </div>
 
-        <div className="min-w-[180px] flex justify-end">
+        <div className="shrink-0 flex justify-end">
           <button
             type="button"
             onClick={onBack}
-            className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/15 hover:bg-white/5 transition-all cursor-pointer"
+            className="text-xs font-semibold text-gray-400 hover:text-white px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/15 hover:bg-white/5 transition-all cursor-pointer"
           >
             Cancelar
           </button>

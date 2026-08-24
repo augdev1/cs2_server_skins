@@ -195,12 +195,12 @@ export default function SkinCustomizerModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="bg-[#070707] border border-[#1a1a1a] rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+      <div className="bg-[#070707] border border-[#1a1a1a] rounded-2xl w-full max-w-5xl max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-3.5 border-b border-[#141414] bg-[#0a0a0a] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="text-base font-extrabold text-white font-display flex items-center gap-2">
+        <div className="px-4 sm:px-6 py-3 sm:py-3.5 border-b border-[#141414] bg-[#0a0a0a] flex items-center justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <h3 className="text-sm sm:text-base font-extrabold text-white font-display flex items-center gap-2">
               <span>{activeWeapon.name || activeWeapon.weaponTitle}</span>
             </h3>
             
@@ -209,7 +209,7 @@ export default function SkinCustomizerModal({
               <button
                 type="button"
                 onClick={() => setSelectedTeam(2)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
                   selectedTeam === 2 
                     ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]' 
                     : 'text-gray-400 hover:text-white'
@@ -221,7 +221,7 @@ export default function SkinCustomizerModal({
               <button
                 type="button"
                 onClick={() => setSelectedTeam(3)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
                   selectedTeam === 3 
                     ? 'bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' 
                     : 'text-gray-400 hover:text-white'
@@ -243,9 +243,9 @@ export default function SkinCustomizerModal({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
           {/* Left: Skins Grid Selector & Knife Model Switcher */}
-          <div className="w-full md:w-1/2 p-5 border-r border-[#141414] flex flex-col bg-[#050505] overflow-y-auto">
+          <div className="w-full md:w-1/2 p-3.5 sm:p-5 border-b md:border-b-0 md:border-r border-[#141414] flex flex-col bg-[#050505] overflow-y-auto max-h-[300px] md:max-h-none shrink-0 md:shrink">
             {/* Search Input */}
             <div className="space-y-3 mb-4">
               <div className="relative">

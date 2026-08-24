@@ -333,7 +333,7 @@ export default function App() {
             onLogout={handleLogout}
           />
 
-          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-black/25 backdrop-blur-[1px]">
+          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-black/25 backdrop-blur-[1px] pb-20 md:pb-0">
             {currentView === 'add' ? (
               /* View 2: "Criar Item / Passo 1 de 2" */
               <AddItemView
@@ -349,7 +349,7 @@ export default function App() {
               />
             ) : (
               /* View 1: "Meu Inventário" */
-              <div className="p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6">
+              <div className="p-3.5 sm:p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-4 sm:space-y-6">
                 <InventoryView
                   weapons={weapons}
                   knives={knives}
