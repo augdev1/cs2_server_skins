@@ -1,7 +1,10 @@
+import os
 import pymysql
 import sys
 
 sys.stdout.reconfigure(encoding='utf-8')
+
+# Script de criação automática de tabelas no Railway MySQL usando variáveis de ambiente ou argumentos
 
 QUERIES = [
     """
@@ -80,4 +83,15 @@ def setup_railway_database(host, port, user, password, database):
     conn.close()
 
 if __name__ == "__main__":
-    setup_railway_database("altaria.proxy.rlwy.net", 16782, "root", "tjguEDSlWQCQVJsXwzxMbLEQzgihRAQV", "railway")
+    host = sys.argv[1] if len(sys.argv) > 1 else os.getenv("DB_HOST", "localhost")
+    port = sys.argv[2] if len(sys.argv) > 2 else os.getenv("DB_PORT", "3306")
+    user = sys.argv[3] if len(sys.argv) > 3 else os.getenv("DB_USER", "root")
+    password = sys.argv[4] if len(sys.argv) > 4 else os.getenv("DB_PASSWORD", "")
+    database = sys.argv[5] if len(sys.argv) > 5 else os.getenv("DB_NAME", "railway")
+
+    if not host or not password:
+        print("Uso: python setup_railway.py <HOST> <PORT> <USER> <PASSWORD> <DATABASE>")
+        print("Exemplo: python setup_railway.py seu_host.proxy.rlwy.net 12345 root sua_senha railway")
+        sys.exit(1)
+
+    setup_railway_database(host, port, user, password, database)
