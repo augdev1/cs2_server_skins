@@ -18,6 +18,16 @@ graph TD
     E -->|Validação de Assinatura| C
 ```
 
+### Interface
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/baaf354e-fba3-469b-af05-780124499f77" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5cffd23c-d449-48f2-bafe-2335afb0eae1" />
+
+
+
+
+
+
 ### 🛠️ Tecnologias & Plataformas Utilizadas:
 
 * **Frontend:**
