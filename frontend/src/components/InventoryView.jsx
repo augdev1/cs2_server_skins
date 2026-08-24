@@ -186,9 +186,9 @@ export default function InventoryView({
   });
 
   return (
-    <div className="space-y-4 bg-[#000000] text-white">
-      {/* Top Action Bar in True Black */}
-      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[#090909] p-3.5 rounded-xl border border-[#171717] shadow-sm">
+    <div className="space-y-5 bg-transparent text-white">
+      {/* Top Action Bar in Translucent Glass */}
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-black/40 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 shadow-xl">
         {/* Left Side: + Adicionar Item button & Filter Pills */}
         <div className="flex items-center flex-wrap gap-2">
           <button
@@ -201,7 +201,7 @@ export default function InventoryView({
           </button>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1 bg-[#050505] p-1 rounded-xl border border-[#1a1a1a]">
+          <div className="flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10">
             {[
               { id: 'all', label: 'Todos' },
               { id: 'custom', label: '★ Personalizados' },
@@ -236,7 +236,7 @@ export default function InventoryView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar no inventário..."
-              className="w-full bg-[#0e0e0e] border border-[#1e1e1e] pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
+              className="w-full bg-black/50 border border-white/10 pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
             />
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function InventoryView({
                 onCustomizeWeapon(item.itemObj);
               }
             }}
-            className="group relative bg-[#090909] hover:bg-[#121212] border border-[#1a1a1a] hover:border-[#ff2020] rounded-2xl p-3.5 flex flex-col items-center justify-between min-h-[210px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
+            className="group relative bg-black/35 hover:bg-black/55 backdrop-blur-sm border border-white/10 hover:border-[#ff2020] rounded-2xl p-3.5 flex flex-col items-center justify-between min-h-[210px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,32,32,0.25)] select-none overflow-hidden"
           >
             {/* Top Bar inside Card */}
             <div className="w-full flex items-center justify-between z-10">
@@ -297,7 +297,7 @@ export default function InventoryView({
             </div>
 
             {/* Bottom Details */}
-            <div className="w-full text-center z-10 pt-2 border-t border-[#141414]">
+            <div className="w-full text-center z-10 pt-2 border-t border-white/10">
               <p className="text-xs font-bold text-white truncate group-hover:text-[#ff2020] transition-colors">
                 {item.skinTitle}
               </p>

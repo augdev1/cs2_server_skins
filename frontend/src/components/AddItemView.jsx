@@ -238,9 +238,9 @@ export default function AddItemView({
   }, [selectedSubTab, skins, gloves, agents, music, search, selectedRarities, selectedWeaponDefindex, selectedKnifeDefindex, selectedGloveType, selectedAgentTeam, KNIFE_TYPES]);
 
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
+    <div className="min-h-screen bg-transparent text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
-      <header className="border-b border-[#141414] bg-[#070707] px-6 py-3 flex items-center justify-between sticky top-0 z-30">
+      <header className="border-b border-white/10 bg-black/50 backdrop-blur-md px-6 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3 min-w-[180px]">
           <button
             type="button"
@@ -268,7 +268,7 @@ export default function AddItemView({
           <button
             type="button"
             onClick={onBack}
-            className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-[#222222] hover:bg-white/5 transition-all cursor-pointer"
+            className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/15 hover:bg-white/5 transition-all cursor-pointer"
           >
             Cancelar
           </button>
@@ -278,9 +278,9 @@ export default function AddItemView({
       {/* Main Container */}
       <div className="flex-1 flex overflow-hidden">
         {/* Central Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#000000] p-5 space-y-4 overflow-y-auto">
+        <div className="flex-1 flex flex-col min-w-0 bg-transparent p-5 space-y-4 overflow-y-auto">
           {/* Top Sub-Navigation Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#141414]">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-white/10">
             {[
               { id: 'skins', label: 'Skins' },
               { id: 'luvas', label: 'Luvas', tabId: 'gloves' },
@@ -301,7 +301,7 @@ export default function AddItemView({
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
                     isActive
                       ? 'bg-[#ff2020] text-white shadow-[0_0_15px_rgba(255,32,32,0.4)]'
-                      : 'text-gray-400 hover:text-white hover:bg-[#0d0d0d]'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   {tab.label}
@@ -319,13 +319,13 @@ export default function AddItemView({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Buscar em ${selectedSubTab}...`}
-                className="w-full bg-[#080808] border border-[#1a1a1a] pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
+                className="w-full bg-black/50 border border-white/10 pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder-gray-500 outline-none focus:border-[#ff2020] transition-all"
               />
             </div>
 
             {/* Grid display mode toggles & count */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center bg-[#080808] p-1 rounded-xl border border-[#1a1a1a]">
+              <div className="flex items-center bg-black/50 p-1 rounded-xl border border-white/10">
                 <button
                   type="button"
                   onClick={() => setGridMode('large')}
@@ -378,7 +378,7 @@ export default function AddItemView({
                 <div
                   key={`${item.weapon_defindex || item.agent_id || item.music_id}_${item.paint || idx}`}
                   onClick={() => onSelectSkin(item)}
-                  className="group relative bg-[#080808] hover:bg-[#101010] border border-[#181818] hover:border-[#ff2020] rounded-2xl p-3 flex flex-col items-center justify-between min-h-[175px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
+                  className="group relative bg-black/35 hover:bg-black/55 backdrop-blur-sm border border-white/10 hover:border-[#ff2020] rounded-2xl p-3 flex flex-col items-center justify-between min-h-[175px] cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,32,32,0.25)] select-none overflow-hidden"
                 >
                   {/* Top Item Category / Model */}
                   <div className="w-full flex items-center justify-between z-10">
@@ -408,7 +408,7 @@ export default function AddItemView({
                   </div>
 
                   {/* Item Details */}
-                  <div className="w-full text-center z-10 pt-1.5 border-t border-[#141414]">
+                  <div className="w-full text-center z-10 pt-1.5 border-t border-white/10">
                     <p className="text-xs font-bold text-white truncate group-hover:text-[#ff2020] transition-colors">
                       {item.paint_name || item.name}
                     </p>
@@ -428,8 +428,8 @@ export default function AddItemView({
           )}
         </div>
 
-        {/* Right Sidebar Filters in Pure Jet Black */}
-        <aside className="w-72 bg-[#060606] border-l border-[#141414] p-4 flex flex-col justify-between hidden lg:flex select-none overflow-y-auto">
+        {/* Right Sidebar Filters */}
+        <aside className="w-72 bg-black/45 backdrop-blur-md border-l border-white/10 p-4 flex flex-col justify-between hidden lg:flex select-none overflow-y-auto">
           <div className="space-y-5">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#141414] pb-3">
