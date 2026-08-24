@@ -58,65 +58,69 @@
   --border-color: #1a1a1a;
   --border-glow: rgba(255, 32, 32, 0.35);
   
-  --cs-primary: #ff2020;
-  --cs-red: #ff2020;
-  --cs-gold: #ffd700;
-  --cs-blue: #2563eb;
-  --cs-t: #ff2020;
-  --cs-ct: #3b82f6;
-  
-  --rarity-covert: #eb4b4b;
-  --rarity-classified: #d32ce6;
-  --rarity-restricted: #8847ff;
-  --rarity-milspec: #4b69ff;
-  --rarity-industrial: #5e98d9;
-  --rarity-consumer: #b0c3d9;
-  --rarity-contraband: #ffd700;
+  --primary-red: #ff2020;
+  --primary-red-hover: #e01515;
+  --primary-red-dim: rgba(255, 32, 32, 0.15);
   
   --text-main: #ffffff;
-  --text-muted: #999999;
-  --text-dim: #666666;
+  --text-muted: #888888;
+  --text-dim: #555555;
   
-  --font-main: 'Reversal', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Reversal', 'Orbitron', 'Rajdhani', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --ct-blue: #3b82f6;
+  --t-red: #ff2020;
 }
 
 html, body {
-  background-color: #050505 !important;
-  background-image: 
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.65) 100%),
-    url('/bg-cs2.jpg') !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
-  color: #ffffff;
-  font-family: var(--font-main) !important;
+  background-color: #000000;
+  background-image: url('/bg-cs2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: 'Reversal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  letter-spacing: 0.02em;
+  touch-action: pan-y;
+  overscroll-behavior-y: none;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
+
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #262626;
-  border-radius: 4px;
+  background: #252525;
+  border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #ff2020;
+}
+
+/* Touch Carrossel & Momentum Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.touch-carousel {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scroll-behavior: smooth;
 }
 
 /* Glassmorphism helpers */

@@ -265,7 +265,7 @@ export default function SkinCustomizerModal({
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                     Escolha o Modelo da Faca:
                   </span>
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-carousel snap-x pb-1">
                     {allKnivesList.map(k => {
                       const isCurrentKnife = Number(k.defindex) === Number(activeWeapon.defindex);
                       const cleanKnifeName = k.name.replace('★', '').replace('Knife', '').trim();
@@ -274,7 +274,7 @@ export default function SkinCustomizerModal({
                           key={k.defindex}
                           type="button"
                           onClick={() => handleSelectKnifeType(k)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold shrink-0 snap-start transition-all cursor-pointer flex items-center gap-1.5 select-none ${
                             isCurrentKnife
                               ? 'bg-[#ff2020] text-white shadow-[0_0_12px_rgba(255,32,32,0.45)] border border-[#ff2020]'
                               : 'bg-[#0d0d0d] text-gray-300 hover:text-white hover:bg-[#181818] border border-[#1f1f1f]'

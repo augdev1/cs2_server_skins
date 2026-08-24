@@ -186,22 +186,28 @@ export default function InventoryView({
   });
 
   return (
-    <div className="space-y-5 bg-transparent text-white">
+    <div className="space-y-4 sm:space-y-5 bg-transparent text-white">
       {/* Top Action Bar in Translucent Glass */}
-      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-black/40 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 shadow-xl">
-        {/* Left Side: + Adicionar Item button & Filter Pills */}
-        <div className="flex items-center flex-wrap gap-2">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 bg-black/40 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/10 shadow-xl">
+        {/* Row 1 on Mobile: + Adicionar Item Button & Team Selector */}
+        <div className="flex items-center justify-between sm:justify-start gap-2.5 flex-wrap">
           <button
             type="button"
             onClick={() => onOpenAdd('skins')}
-            className="flex items-center gap-2 bg-[#ff2020] hover:bg-[#e01515] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95 font-display tracking-wider"
+            className="flex items-center gap-2 bg-[#ff2020] hover:bg-[#e01515] text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer hover:scale-[1.02] active:scale-95 font-display tracking-wider shrink-0"
           >
-            <Plus size={16} strokeWidth={3} />
+            <Plus size={15} strokeWidth={3} />
             <span>Adicionar Skin</span>
           </button>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10">
+          <div className="lg:hidden shrink-0">
+            <TeamSelector selectedTeam={team} onSelectTeam={setTeam} />
+          </div>
+        </div>
+
+        {/* Row 2 on Mobile: Horizontal Swipe Touch Carousel for Filter Pills */}
+        <div className="w-full lg:w-auto overflow-hidden">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-carousel bg-black/50 p-1 sm:p-1.5 rounded-xl border border-white/10 snap-x">
             {[
               { id: 'all', label: 'Todos' },
               { id: 'custom', label: '★ Personalizados' },
@@ -213,7 +219,7 @@ export default function InventoryView({
                 key={pill.id}
                 type="button"
                 onClick={() => setActiveCategoryFilter(pill.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 snap-start select-none ${
                   activeCategoryFilter === pill.id
                     ? 'bg-[#ff2020] text-white shadow-[0_0_10px_rgba(255,32,32,0.4)]'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -225,12 +231,14 @@ export default function InventoryView({
           </div>
         </div>
 
-        {/* Center / Right: Team Selector & Search Input */}
-        <div className="flex items-center flex-wrap gap-3 justify-end">
-          <TeamSelector selectedTeam={team} onSelectTeam={setTeam} />
+        {/* Row 3 on Mobile / Right side on Desktop: Desktop Team Selector & Search Input */}
+        <div className="flex items-center gap-2.5 w-full lg:w-auto justify-end">
+          <div className="hidden lg:block shrink-0">
+            <TeamSelector selectedTeam={team} onSelectTeam={setTeam} />
+          </div>
 
-          <div className="relative min-w-[240px] flex-1 sm:flex-initial">
-            <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
+          <div className="relative w-full lg:min-w-[240px]">
+            <Search size={14} className="absolute left-3 top-2.5 text-gray-500" />
             <input
               type="text"
               value={search}
@@ -243,17 +251,17 @@ export default function InventoryView({
       </div>
 
       {/* Item Counter Bar */}
-      <div className="flex items-center justify-between text-xs text-gray-400 px-1">
-        <span className="font-semibold">
+      <div className="flex items-center justify-between text-[11px] sm:text-xs text-gray-400 px-1">
+        <span className="font-semibold truncate">
           Inventário <span className="text-white font-bold">{team === 2 ? 'Terrorista (TR)' : 'Contra-Terrorista (CT)'}</span>
         </span>
-        <span className="text-gray-500">
-          Mostrando <strong className="text-[#ff2020]">{filteredItems.length}</strong> itens {activeCategoryFilter !== 'all' ? `em ${activeCategoryFilter}` : 'equipados'}
+        <span className="text-gray-500 shrink-0 ml-2">
+          <strong className="text-[#ff2020]">{filteredItems.length}</strong> {activeCategoryFilter !== 'all' ? activeCategoryFilter : 'itens'}
         </span>
       </div>
 
       {/* Grid of Equipped Items */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5">
         {filteredItems.map((item) => (
           <div
             key={item.id}

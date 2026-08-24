@@ -305,8 +305,8 @@ export default function AddItemView({
       <div className="flex-1 flex overflow-hidden">
         {/* Central Content Area */}
         <div className="flex-1 flex flex-col min-w-0 bg-transparent p-5 space-y-4 overflow-y-auto">
-          {/* Top Sub-Navigation Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-white/10">
+          {/* Top Sub-Navigation Tabs (Touch-Carousel) */}
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-carousel pb-2 pt-1 border-b border-white/10 snap-x">
             {[
               { id: 'skins', label: 'Skins' },
               { id: 'luvas', label: 'Luvas', tabId: 'gloves' },
@@ -324,7 +324,7 @@ export default function AddItemView({
                     setSelectedSubTab(currentTabId);
                     handleClearFilters();
                   }}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none shrink-0 snap-start ${
                     isActive
                       ? 'bg-[#ff2020] text-white shadow-[0_0_15px_rgba(255,32,32,0.4)]'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -337,8 +337,8 @@ export default function AddItemView({
           </div>
 
           {/* Search and Grid Control Bar */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-4">
+            <div className="relative flex-1 max-w-none sm:max-w-md">
               <Search size={15} className="absolute left-3 top-2.5 text-gray-500" />
               <input
                 type="text"
@@ -350,7 +350,7 @@ export default function AddItemView({
             </div>
 
             {/* Grid display mode toggles & count */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between sm:justify-end gap-2">
               <div className="flex items-center bg-black/50 p-1 rounded-xl border border-white/10">
                 <button
                   type="button"
