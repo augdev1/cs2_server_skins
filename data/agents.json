@@ -165,7 +165,7 @@
     "team": "ct",
     "rarity": "Superior",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nn-Cxf7uCjbbZkJc-FD3WZwOBisq9tGnnhkxt0sTjcwtyrcnqXO1AgDZJyQbEMsxbqwIayZrnhswHfg4gU02yg2bd7mpZ0",
-    "model": "ctm_st6/ctm_st6_variantj"
+    "model": "ctm_gendarmerie/ctm_gendarmerie_variante"
   },
   {
     "agent_id": "agent-4751",
@@ -234,7 +234,7 @@
   {
     "agent_id": "agent-4774",
     "name": "Crasswater The Forgotten | Guerrilla Warfare",
-    "team": "ct",
+    "team": "t",
     "rarity": "Master",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZz18yVX6s28aa1pJeKsGGaCyO94pOMnTH-3kU8m5D6Gz4qodX2SbAdxCJUlROAD5kS7w4WyYuyz4QOMj94QmzK-0H2dcvV-Fg",
     "model": "tm_jungle_raider/tm_jungle_raider_variantb"
@@ -274,10 +274,10 @@
   {
     "agent_id": "agent-4780",
     "name": "'Medium Rare' Crasswater | Guerrilla Warfare",
-    "team": "ct",
+    "team": "t",
     "rarity": "Master",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZz18yVX6s28aa1pJeKsGGaCyO94pOM7AXGwwBxz5G2Gy9qqdy_GaARyDcF2FrUK50LuwICzM-3i4wzZj4NFyn_gznQeAuFLUp4",
-    "model": "ctm_st6/ctm_st6_variantj"
+    "model": "tm_jungle_raider/tm_jungle_raider_variantb2"
   },
   {
     "agent_id": "agent-4781",
@@ -293,7 +293,7 @@
     "team": "t",
     "rarity": "Distinguished",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZrl-DZk-fO8YaVjNPfdVmHAxOgj4uNtGyqxxRki52jSyoqseHiRalRyWcdzE-APuxK8xNbmYvSiuVLQnSKAnQ",
-    "model": "tm_jungle_raider/tm_jungle_raider_varianta"
+    "model": "tm_leet/tm_leet_varianth"
   },
   {
     "agent_id": "agent-5106",
@@ -357,7 +357,7 @@
     "team": "t",
     "rarity": "Distinguished",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oYbo8idV5uqRfqV_KfGdGm7ex78n4LU_GSrmzBxx4Dncntn_InmWPwcmCccjTO8L50awwdC2N-uwsxue1dwGHFtFrw",
-    "model": "tm_phoenix/tm_phoenix_varianti"
+    "model": "tm_phoenix/tm_phoenix_varianth"
   },
   {
     "agent_id": "agent-5305",
@@ -381,7 +381,7 @@
     "team": "ct",
     "rarity": "Superior",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nm_ytk-fO8YaVjNPjdXjWRkegi57FoHyrglkh-62ndz4yrIimfOFRxCZQmQeQOsEK9wNfnYvSiuVJ9Bmql3Q",
-    "model": "ctm_st6/ctm_st6_variantj"
+    "model": "ctm_fbi/ctm_fbi_varianth"
   },
   {
     "agent_id": "agent-5308",
@@ -413,7 +413,7 @@
     "team": "ct",
     "rarity": "Exceptional",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nz6XRk-fO8YaVjNPfdCzfBx7gl5LQ-GnrkkR4l4DyDzIv8cnKXaQ4jXsQjEOcJ4RHuxNTuMPSiuVIYxifJkQ",
-    "model": "ctm_st6/ctm_st6_variantg"
+    "model": "ctm_st6/ctm_st6_variantj"
   },
   {
     "agent_id": "agent-5403",
@@ -434,10 +434,10 @@
   {
     "agent_id": "agent-5405",
     "name": "Primeiro Tenente | Brazilian 1st Battalion",
-    "team": "t",
+    "team": "ct",
     "rarity": "Distinguished",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nz6XRk-fO8YaVjNP7dV2bFlesvtbM_Sn7gx010tTncmdn7ICqePQ4mWMB5EeALtRS7w4XuP_SiuVLSDPMGxQ",
-    "model": "tm_jungle_raider/tm_jungle_raider_varianta"
+    "model": "ctm_st6/ctm_st6_variantn"
   },
   {
     "agent_id": "agent-5500",
@@ -485,7 +485,7 @@
     "team": "t",
     "rarity": "Distinguished",
     "image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZTh8Sla4c24abZkIf6HAimWlb9w57hoGHrmlB9_4j-Gm439d3rCPAEiDZNwQrUD40K9m9GzNu-0-UWA3CLCQ0Kd",
-    "model": "tm_balkan/tm_balkan_variantl"
+    "model": "tm_balkan/tm_balkan_variantf"
   },
   {
     "agent_id": "agent-5601",
