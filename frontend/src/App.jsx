@@ -299,7 +299,17 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased">
+    <div className="min-h-screen flex flex-col md:flex-row text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased relative">
+      {/* Fixed Hardware-Accelerated Wallpaper (Zero scroll lag on mobile/desktop) */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-50 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: "url('/bg-cs2.jpg')",
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)'
+        }} 
+      />
+
       {/* Toast Notification */}
       {toast && (
         <div 
