@@ -299,7 +299,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row text-white selection:bg-[#ff2020] selection:text-white font-sans antialiased">
       {/* Toast Notification */}
       {toast && (
         <div 
@@ -333,7 +333,7 @@ export default function App() {
             onLogout={handleLogout}
           />
 
-          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-black/25 backdrop-blur-[1px] pb-20 md:pb-0">
+          <div className="flex-1 flex flex-col min-w-0 bg-black/25 backdrop-blur-[1px] pb-24 md:pb-0">
             {currentView === 'add' ? (
               /* View 2: "Criar Item / Passo 1 de 2" */
               <AddItemView

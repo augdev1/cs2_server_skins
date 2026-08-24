@@ -82,9 +82,7 @@ html, body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  overflow-x: hidden;
-  touch-action: pan-y;
-  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Custom Scrollbars */
@@ -118,8 +116,6 @@ html, body {
 
 .touch-carousel {
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  touch-action: pan-x;
   scroll-behavior: smooth;
 }
 
