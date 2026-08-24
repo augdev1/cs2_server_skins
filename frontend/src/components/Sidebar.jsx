@@ -14,7 +14,7 @@ export default function Sidebar({
   onLogout 
 }) {
   return (
-    <aside className="fixed bottom-0 left-0 right-0 h-16 w-full flex-row border-t border-white/10 bg-[#060606]/95 backdrop-blur-2xl flex items-center justify-around px-4 select-none z-50 shadow-2xl md:relative md:w-16 md:min-h-screen md:flex-col md:justify-between md:py-4 md:px-2 md:border-t-0 md:border-r md:border-white/10 shrink-0">
+    <aside className="fixed bottom-0 left-0 right-0 h-16 w-full flex-row border-t border-white/10 bg-[#060606]/95 backdrop-blur-2xl flex items-center justify-around px-4 select-none z-50 shadow-2xl md:sticky md:top-0 md:h-screen md:w-16 md:flex-col md:justify-between md:py-4 md:px-2 md:border-t-0 md:border-r md:border-white/10 shrink-0">
       {/* Brand & Main Nav */}
       <div className="flex items-center md:flex-col gap-4 sm:gap-6 md:gap-5 w-auto md:w-full justify-center">
         {/* CS PLAY Brand Badge */}

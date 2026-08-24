@@ -454,11 +454,11 @@ export default function AddItemView({
           )}
         </div>
 
-        {/* Right Sidebar Filters */}
-        <aside className="w-72 bg-black/45 backdrop-blur-md border-l border-white/10 p-4 flex flex-col justify-between hidden lg:flex select-none overflow-y-auto">
-          <div className="space-y-5">
+        {/* Right Sidebar Filters (Sticky & Always Pinned within Viewport) */}
+        <aside className="w-72 bg-black/45 backdrop-blur-md border-l border-white/10 p-4 flex flex-col justify-between hidden lg:flex select-none sticky top-14 h-[calc(100vh-3.5rem)] overflow-hidden shrink-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-5 no-scrollbar">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#141414] pb-3">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={14} className="text-[#ff2020]" />
                 <span className="text-xs font-black uppercase text-white font-display tracking-wider">
@@ -493,7 +493,7 @@ export default function AddItemView({
               </div>
 
               {isTypeSectionOpen && (
-                <div className="flex flex-wrap gap-1.5 max-h-[300px] overflow-y-auto pr-1">
+                <div className="flex flex-wrap gap-1.5 max-h-[220px] overflow-y-auto pr-1 no-scrollbar">
                   {/* 1. Skins Tab (Armas) */}
                   {selectedSubTab === 'skins' && PRIMARY_WEAPONS.map((wpn) => {
                     const isSelected = selectedWeaponDefindex === wpn.defindex;
@@ -627,12 +627,12 @@ export default function AddItemView({
             </div>
           </div>
 
-          {/* Bottom Action */}
-          <div className="pt-4 border-t border-[#141414]">
+          {/* Bottom Action (Always Pinned in Viewport) */}
+          <div className="pt-3 border-t border-white/10 mt-2 shrink-0">
             <button
               type="button"
               onClick={onBack}
-              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-extrabold py-2.5 rounded-xl text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider"
+              className="w-full bg-[#ff2020] hover:bg-[#e01515] text-white font-extrabold py-2.5 rounded-xl text-xs shadow-[0_0_15px_rgba(255,32,32,0.4)] transition-all cursor-pointer font-display tracking-wider hover:scale-[1.01] active:scale-98"
             >
               Ver {filteredList.length} resultados
             </button>
