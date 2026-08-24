@@ -9,6 +9,7 @@ import {
   Eye
 } from 'lucide-react';
 import TeamSelector from './TeamSelector';
+import ServerConnectButton from './ServerConnectButton';
 
 export default function InventoryView({ 
   weapons = [], 
@@ -320,6 +321,11 @@ export default function InventoryView({
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Centered Server IP Connect Bar at Bottom */}
+      <div className="w-full pt-8 pb-4 flex justify-center items-center">
+        <ServerConnectButton />
       </div>
     </div>
   );

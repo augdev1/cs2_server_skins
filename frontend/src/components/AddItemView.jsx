@@ -11,6 +11,7 @@ import {
   X
 } from 'lucide-react';
 import KnifeIcon from './KnifeIcon';
+import ServerConnectButton from './ServerConnectButton';
 
 export default function AddItemView({ 
   skins = [], 
@@ -240,7 +241,7 @@ export default function AddItemView({
     <div className="min-h-screen bg-[#000000] text-gray-200 flex flex-col selection:bg-[#ff2020] selection:text-white">
       {/* Top Header */}
       <header className="border-b border-[#141414] bg-[#070707] px-6 py-3 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-[180px]">
           <button
             type="button"
             onClick={onBack}
@@ -258,13 +259,20 @@ export default function AddItemView({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-[#222222] hover:bg-white/5 transition-all cursor-pointer"
-        >
-          Cancelar
-        </button>
+        {/* Centered Server IP Connect Button */}
+        <div className="flex-1 flex justify-center px-4">
+          <ServerConnectButton variant="compact" />
+        </div>
+
+        <div className="min-w-[180px] flex justify-end">
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-[#222222] hover:bg-white/5 transition-all cursor-pointer"
+          >
+            Cancelar
+          </button>
+        </div>
       </header>
 
       {/* Main Container */}
