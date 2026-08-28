@@ -10,6 +10,7 @@ import {
   Flame
 } from 'lucide-react';
 import { authService } from '../services/api';
+import ServerConnectButton from './ServerConnectButton';
 
 export default function LoginView({ onOpenDevLogin }) {
   const [steamLoading, setSteamLoading] = useState(false);
@@ -101,6 +102,11 @@ export default function LoginView({ onOpenDevLogin }) {
             <p className="text-[10px] font-bold text-gray-200">Agentes & Luvas</p>
             <p className="text-[9px] text-gray-400">TR e CT separados</p>
           </div>
+        </div>
+
+        {/* Centered Server IP Connect Button */}
+        <div className="w-full flex justify-center pt-1">
+          <ServerConnectButton />
         </div>
       </div>
     </div>
