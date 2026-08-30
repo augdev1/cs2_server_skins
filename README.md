@@ -5,7 +5,7 @@
 
 ---
 
-## 🚀 Demonstração da Arquitetura & Stack Tecnológica
+##  Demonstração da Arquitetura & Stack Tecnológica
 
 O projeto foi projetado com uma arquitetura desacoplada e escalável, utilizando as melhores práticas modernas de desenvolvimento Web, DevOps e Engenharia de Banco de Dados:
 
@@ -153,7 +153,7 @@ STEAM_API_KEY=sua_steam_api_key
 
 ---
 
-## 🎯 Habilidades & Competências Demonstradas
+##  Habilidades & Competências Demonstradas
 
 * **Engenharia Full-Stack:** Desenvolvimento de interfaces interativas e reativas em React combinadas com APIs robustas e de baixa latência em Python/FastAPI.
 * **Modelagem & Administração de Banco de Dados:** Criação de schemas relacionais otimizados para jogos multiplayer, migrações de dados em produção e resolução de problemas de concorrência.
